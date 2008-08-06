@@ -1,0 +1,154 @@
+var Hattrick = {
+	onTimeout: null,
+	onError: null,
+	
+	connect: function(proxyServer, proxyUsername, proxyPassword, onConnect) {
+		Hattrick.mServer = "";
+		if (!Hattrick.mTimeOffset) Hattrick.mTimeOffset = 0;
+		
+		Hattrick.mHttp = new HandledRequest();
+		Hattrick.mHttp.proxyServer = proxyServer;
+		Hattrick.mHttp.proxyUsername = proxyUsername;
+		Hattrick.mHttp.proxyPassword = proxyPassword;
+		Hattrick.mHttp.requestHeaders = [{key: "userAgent", value: "Hattrick Gadget " + Version.parse(System.Gadget.version).toString() }];
+		Hattrick.mHttp.onError = function(httpStatus) {
+			if (Hattrick.onError) Hattrick.onError("HTTP Error: " + httpStatus);
+		};
+		Hattrick.mHttp.onTimeout = function() {
+			if (Hattrick.onTimeout) Hattrick.onTimeout("Connection Timeout!");
+		}
+		
+		Hattrick.doRequest("http://www.hattrick.org/common/menu.asp?outputType=XML", function(xml) {
+			Hattrick.mServer = xml.selectSingleNode("/HattrickData/RecommendedURL").text;
+			
+			var dServerDate = Hattrick.toDate(xml.selectSingleNode("/HattrickData/FetchedDate").text);
+			Hattrick.mTimeOffset = (dServerDate.getTime() -  new Date().getTime());
+			
+			if (onConnect) onConnect(xml);
+		} );
+	},
+	
+	login: function (username, password, onLogin) {
+		Hattrick.doRequest("/common/default.asp?outputType=XML&actionType=login&loginType=CHPP&loginName=" + username + "&readonlyPassword=" + password, onLogin);
+	},
+	
+	getTeamDetails: function(teamID, onGetTeamDetails) {
+		Hattrick.doRequest("/common/teamDetails.asp?outputType=XML&actionType=view" + (teamID == 0 ? "" : "&teamID=" + teamID), onGetTeamDetails);
+	},
+	
+	getMatches: function(teamID, onGetMatches) {
+		Hattrick.doRequest("/common/chpp/chppxml.axd?file=matches" + (teamID == 0 ? "" : "&teamID=" + teamID), onGetMatches);
+	},
+	
+	getMatchDetails: function(matchID, onGetMatchDetails) {
+		Hattrick.doRequest("/common/chpp/chppxml.axd?file=matchdetails&matchID=" + matchID, onGetMatchDetails);
+	},
+	
+	getPlayers: function(teamID, onGetPlayers) {
+		Hattrick.doRequest("/common/players.asp?outputType=XML&actionType=view&orderBy=PlayerNumber&outputVersion=1.3" + (teamID == 0 ? "" : "&teamID=" + teamID), onGetPlayers);
+	},
+	
+	getPlayerDetails: function(playerID, onGetPlayerDetails) {
+		Hattrick.doRequest("/common/playerDetails.asp?outputType=XML&actionType=view&playerID=" + playerID, onGetPlayerDetails);
+	},
+	
+	addLiveMatch: function(matchID, onAddLiveMatch) {
+		Hattrick.doRequest("/common/chpp/chppxml.axd?file=live&actionType=addMatch&matchID=" + matchID, onAddLiveMatch);
+	},
+	
+	getLiveMatches: function(onGetLiveMatches) {
+		Hattrick.doRequest("/common/chpp/chppxml.axd?file=live&actionType=viewNew", onGetLiveMatches);
+	},
+	
+	deleteLiveMatch: function(matchID, onDeleteLiveMatch) {
+		Hattrick.doRequest("/common/chpp/chppxml.axd?file=live&actionType=deleteMatch&matchID=" + matchID, onDeleteLiveMatch);
+	},
+	
+	getLeagueDetails: function(leagueUnitID, onGetLeagueDetails) {
+		Hattrick.doRequest("/common/leagueDetails.asp?outputType=XML&actionType=view" + (leagueUnitID == 0 ? "" : "&leagueLevelUnitID=" + leagueUnitID), onGetLeagueDetails);
+	},
+	
+	getEconomy: function(onGetEconomy) {
+		Hattrick.doRequest("/common/economy.asp?outputType=XML&actionType=view", onGetEconomy);
+	},
+	
+	getWorldDetails: function(onGetWorldDetails) {
+		Hattrick.doRequest("/common/chppxml.axd?file=worlddetails", onGetWorldDetails);
+	},
+	
+	getRegionDetails: function(regionID, onGetRegionDetails) {
+		Hattrick.doRequest("/common/regionDetails.asp?outputType=XML&actionType=view" + (regionID == 0 ? "" : "&regionID=" + regionID), onGetRegionDetails);
+	},
+	
+	getArenaDetails: function(arenaID, onGetArenaDetails) {
+		Hattrick.doRequest("/common/arenaDetails.asp?outputType=XML&actionType=view" + (arenaID == 0 ? "" : "&arenaID=" + arenaID), onGetArenaDetails);
+	},
+	
+	getClubDetails: function(onGetClubDetails) {
+		Hattrick.doRequest("/common/club.asp?outputType=XML&actionType=view", onGetClubDetails);
+	},
+	
+	getChallanges: function(onGetChallanges) {
+		Hattrick.doRequest("/common/challanges.asp?outputType=XML&actionType=view", onGetChallanges);
+	},
+	
+	getBookmarks: function(bookmarkType, onGetBookmarks) {
+		Hattrick.doRequest("/common/chppxml.axd?file=bookmarks&BookmarkTypeID=" + bookmarkType, onGetBookmarks);
+	},
+	
+	doRequest: function(url, returnEventHandler) {
+		if (Hattrick.mServer != "") url = Hattrick.mServer + url;
+		
+		Hattrick.mHttp.doRequest(url, function(xml) {
+			if (xml.parseError != 0) {
+				if (Hattrick.onError) Hattrick.onError("No XML Response!");
+			}
+			else if (xml.selectSingleNode("/HattrickData") == null || xml.selectSingleNode("/HattrickData/ErrorCode") != null) {
+				if (Hattrick.onError) Hattrick.onError("XML Response Error!");
+			}
+			else {
+				if (returnEventHandler) returnEventHandler(xml);
+			}
+		} );
+	},
+	
+	toDate: function(htDate) {
+		var iYear = parseInt(htDate.substr(0, 4),10);
+		var iMonth = parseInt(htDate.substr(5, 2),10) - 1;
+		var iDay = parseInt(htDate.substr(8, 2),10);
+		var iHours = 0;
+		var iMinutes = 0;
+		var iSeconds = 0;
+		var dDate = new Date();
+		
+		if (htDate.length > 10) {
+			iHours = parseInt(htDate.substr(11, 2),10);
+			iMinutes = parseInt(htDate.substr(14, 2),10);
+			iSeconds = parseInt(htDate.substr(17, 2),10);
+		}
+		
+		dDate.setFullYear(iYear);
+		dDate.setMonth(iMonth);
+		dDate.setDate(iDay);
+		dDate.setHours(iHours);
+		dDate.setMinutes(iMinutes);
+		dDate.setSeconds(iSeconds);
+		
+		return dDate;
+	},
+	
+	offsetSystemDate: function(date) {
+		return date.addMilliseconds(Hattrick.mTimeOffset);
+	},
+	
+	isFriendlyMatchType: function(type) {
+		switch (parseInt(type, 10)) {
+			case 4:
+			case 5:
+			case 8:
+			case 9:
+				return true;
+		}
+		return false;
+	}
+}
