@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hattrick.Service", "Hattrick.Service\Hattrick.Service.csproj", "{2E0B8AF0-C485-4129-B9F6-3342E45B0877}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hattrick.Test", "Hattrick.Test\Hattrick.Test.csproj", "{5198C00C-7847-4303-8626-E6816E945B78}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2E0B8AF0-C485-4129-B9F6-3342E45B0877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E0B8AF0-C485-4129-B9F6-3342E45B0877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E0B8AF0-C485-4129-B9F6-3342E45B0877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E0B8AF0-C485-4129-B9F6-3342E45B0877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5198C00C-7847-4303-8626-E6816E945B78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5198C00C-7847-4303-8626-E6816E945B78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5198C00C-7847-4303-8626-E6816E945B78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5198C00C-7847-4303-8626-E6816E945B78}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
