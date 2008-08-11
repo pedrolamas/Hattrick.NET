@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace Hattrick.Service
 {
-    public delegate void OnResponse<T>(T response);
+    public delegate void OnResponse<T>(T response) where T : BaseResponseInfo;
 
     public class ConnectionBroker
     {
@@ -42,9 +42,9 @@ namespace Hattrick.Service
             });
         }
 
-        public void Login(string username, string password, OnResponse<BaseResponseInfo> onLogin)
+        public void Login(string username, string securityCode, OnResponse<BaseResponseInfo> onLogin)
         {
-            DoRequest("/common/default.asp?outputType=XML&actionType=login&loginType=CHPP&loginName=" + username + "&readonlyPassword=" + password, onLogin);
+            DoRequest("/common/default.asp?outputType=XML&actionType=login&loginType=CHPP&loginName=" + username + "&readonlyPassword=" + securityCode, onLogin);
         }
 
         //public void GetTeamDetails(int teamID, OnResponse<XDocument> onGetTeamDetails)
@@ -104,7 +104,8 @@ namespace Hattrick.Service
 
         public void GetRegionDetails(OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
         {
-            DoRequest("/common/regionDetails.asp?outputType=XML&actionType=view", onGetRegionDetails);
+            //DoRequest("/common/regionDetails.asp?outputType=XML&actionType=view", onGetRegionDetails);
+            GetRegionDetails(0, onGetRegionDetails);
         }
         public void GetRegionDetails(int regionID, OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
         {
@@ -117,9 +118,10 @@ namespace Hattrick.Service
 
         public void GetArenaDetails(OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
         {
-            DoRequest("/common/arenaDetails.asp?outputType=XML&actionType=view", onGetArenaDetails);
+            //DoRequest("/common/arenaDetails.asp?outputType=XML&actionType=view", onGetArenaDetails);
+            GetArenaDetails(new ArenaDetailsRequestInfo(), onGetArenaDetails);
         }
-        public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<XDocument> onGetArenaDetails)
+        public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
         {
             string sUrl = "/common/arenaDetails.asp?outputType=XML&actionType=view";
 
@@ -148,7 +150,7 @@ namespace Hattrick.Service
         //    DoRequest("/common/chppxml.axd?file=bookmarks&BookmarkTypeID=" + bookmarkType, onGetBookmarks);
         //}
 
-        public void DoRequest<T>(string url, OnResponse<T> onResponse)
+        public void DoRequest<T>(string url, OnResponse<T> onResponse) where T : BaseResponseInfo
         {
             if (_serverUrl != string.Empty) url = _serverUrl + url;
 

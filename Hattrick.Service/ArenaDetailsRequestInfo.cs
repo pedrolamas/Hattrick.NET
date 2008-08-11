@@ -8,7 +8,7 @@ namespace Hattrick.Service
 {
     public class ArenaDetailsRequestInfo : BaseRequestInfo
     {
-        #region Enums
+        #region Enumerations
 
         public enum StatsTypeEnum
         {
@@ -26,50 +26,19 @@ namespace Hattrick.Service
 
         #endregion
 
-        private int _arenaId;
-        private StatsTypeEnum _statsType;
-        private MatchTypeEnum _matchType;
-        private DateTime _firstDate;
-        private DateTime _lastDate;
-        private int _statsLeagueID;
-
         #region Properties
 
-        public int ArenaId
-        {
-            get { return _arenaId; }
-            set { _arenaId = value; }
-        }
+        public int ArenaId { get; set; }
 
-        public StatsTypeEnum StatsType
-        {
-            get { return _statsType; }
-            set { _statsType = value; }
-        }
+        public StatsTypeEnum StatsType { get; set; }
 
-        public MatchTypeEnum MatchType
-        {
-            get { return _matchType; }
-            set { _matchType = value; }
-        }
+        public MatchTypeEnum MatchType { get; set; }
 
-        public DateTime FirstDate
-        {
-            get { return _firstDate; }
-            set { _firstDate = value; }
-        }
+        public DateTime FirstDate { get; set; }
 
-        public DateTime LastDate
-        {
-            get { return _lastDate; }
-            set { _lastDate = value; }
-        }
+        public DateTime LastDate { get; set; }
 
-        public int StatsLeagueID
-        {
-            get { return _statsLeagueID; }
-            set { _statsLeagueID = value; }
-        }
+        public int StatsLeagueID { get; set; }
 
         #endregion
 

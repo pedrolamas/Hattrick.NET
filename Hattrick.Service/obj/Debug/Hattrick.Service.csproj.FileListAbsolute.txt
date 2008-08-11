@@ -3,3 +3,8 @@ D:\Users\plamas\Documents\My Dropbox\Documents\Hattrick\Hattrick.Service\bin\Deb
 D:\Users\plamas\Documents\My Dropbox\Documents\Hattrick\Hattrick.Service\obj\Debug\ResolveAssemblyReference.cache
 D:\Users\plamas\Documents\My Dropbox\Documents\Hattrick\Hattrick.Service\obj\Debug\Hattrick.Service.dll
 D:\Users\plamas\Documents\My Dropbox\Documents\Hattrick\Hattrick.Service\obj\Debug\Hattrick.Service.pdb
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Service\bin\Debug\Hattrick.Service.dll
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Service\bin\Debug\Hattrick.Service.pdb
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Service\obj\Debug\ResolveAssemblyReference.cache
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Service\obj\Debug\Hattrick.Service.dll
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Service\obj\Debug\Hattrick.Service.pdb

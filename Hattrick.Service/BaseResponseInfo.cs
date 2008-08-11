@@ -10,42 +10,20 @@ namespace Hattrick.Service
     [XmlRoot("HattrickData")]
     public class BaseResponseInfo
     {
-        private GenericNode<string> _filename;
-        private GenericNode<string> _version;
-        private GenericNode<int> _userId;
-        private DateTimeNode _fetchedDate;
-
         #region Properties
 
         [XmlElement]
-        public GenericNode<string> Filename
-        {
-            get { return _filename; }
-            set { _filename = value; }
-        }
+        public GenericNode<string> Filename { get; set; }
 
         [XmlElement]
-        public GenericNode<string> Version
-        {
-            get { return _version; }
-            set { _version = value; }
-        }
+        public GenericNode<string> Version { get; set; }
 
         [XmlElement("UserID")]
-        public GenericNode<int> UserId
-        {
-            get { return _userId; }
-            set { _userId = value; }
-        }
+        public GenericNode<int> UserId { get; set; }
 
         [XmlElement]
-        public DateTimeNode FetchedDate
-        {
-            get { return _fetchedDate; }
-            set { _fetchedDate = value; }
-        }
+        public DateTimeNode FetchedDate { get; set; }
 
         #endregion
     }
-
 }
