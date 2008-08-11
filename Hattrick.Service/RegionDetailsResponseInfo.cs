@@ -9,102 +9,63 @@ namespace Hattrick.Service
     [XmlRoot("HattrickData")]
     public class RegionDetailsResponseInfo : BaseResponseInfo
     {
-        private LeagueDetails _league;
-
         #region Properties
 
-        public LeagueDetails League
-        {
-            get { return _league; }
-            set { _league = value; }
-        }
+        public LeagueDetails League { get; set; }
 
         #endregion
 
+        public RegionDetailsResponseInfo()
+        {
+            League = new LeagueDetails();
+        }
+
+        #region Auxiliary Classes
+
         public class LeagueDetails
         {
-            private GenericNode<int> _leagueId;
-            private GenericNode<string> _leagueName;
-            private RegionDetails _region = new RegionDetails();
+            public LeagueDetails()
+            {
+                Region = new RegionDetails();
+            }
 
             #region Properties
 
             [XmlElement("LeagueID")]
-            public GenericNode<int> LeagueId
-            {
-                get { return _leagueId; }
-                set { _leagueId = value; }
-            }
+            public GenericNode<int> LeagueId { get; set; }
 
             [XmlElement]
-            public GenericNode<string> LeagueName
-            {
-                get { return _leagueName; }
-                set { _leagueName = value; }
-            }
+            public GenericNode<string> LeagueName { get; set; }
 
             [XmlElement]
-            public RegionDetails Region
-            {
-                get { return _region; }
-                set { _region = value; }
-            }
+            public RegionDetails Region { get; set; }
 
             #endregion
         }
 
         public class RegionDetails
         {
-            private GenericNode<int> _regionId;
-            private GenericNode<string> _regionName;
-            private GenericNode<int> _weatherId;
-            private GenericNode<int> _tomorrowWeatherId;
-            private GenericNode<int> _numberOfUsers;
-            private GenericNode<int> _numberOfUsersOnline;
-
             #region Properties
 
             [XmlElement("RegionID")]
-            public GenericNode<int> RegionId
-            {
-                get { return _regionId; }
-                set { _regionId = value; }
-            }
+            public GenericNode<int> RegionId { get; set; }
 
             [XmlElement]
-            public GenericNode<string> RegionName
-            {
-                get { return _regionName; }
-                set { _regionName = value; }
-            }
+            public GenericNode<string> RegionName { get; set; }
 
             [XmlElement("WeatherID")]
-            public GenericNode<int> WeatherId
-            {
-                get { return _weatherId; }
-                set { _weatherId = value; }
-            }
+            public GenericNode<int> WeatherId { get; set; }
 
             [XmlElement("TomorrowWeatherID")]
-            public GenericNode<int> TomorrowWeatherId
-            {
-                get { return _tomorrowWeatherId; }
-                set { _tomorrowWeatherId = value; }
-            }
+            public GenericNode<int> TomorrowWeatherId { get; set; }
 
-            public GenericNode<int> NumberOfUsers
-            {
-                get { return _numberOfUsers; }
-                set { _numberOfUsers = value; }
-            }
+            public GenericNode<int> NumberOfUsers { get; set; }
 
-            public GenericNode<int> NumberOfUsersOnline
-            {
-                get { return _numberOfUsersOnline; }
-                set { _numberOfUsersOnline = value; }
-            }
+            public GenericNode<int> NumberOfUsersOnline { get; set; }
 
             #endregion
         }
+
+        #endregion
     }
 }

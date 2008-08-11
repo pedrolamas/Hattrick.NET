@@ -12,3 +12,11 @@ D:\Users\plamas\Documents\My Dropbox\Documents\Hattrick\Hattrick.Test\bin\Debug\
 D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\bin\Debug\Hattrick.Test.exe.config
 D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\obj\Debug\Hattrick.Test.exe
 D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\obj\Debug\Hattrick.Test.pdb
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\bin\Debug\Hattrick.Test.exe
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\bin\Debug\Hattrick.Test.pdb
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\bin\Debug\Hattrick.Service.dll
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\bin\Debug\Hattrick.Service.pdb
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\obj\Debug\ResolveAssemblyReference.cache
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\obj\Debug\Hattrick.Test.Properties.Resources.resources
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\obj\Debug\Hattrick.Test.csproj.GenerateResource.Cache
+D:\Users\plamas\Documents\My Dropbox\Documents\Projectos\Hattrick\Hattrick.Test\obj\Debug\Hattrick.Test.frmMain.resources
