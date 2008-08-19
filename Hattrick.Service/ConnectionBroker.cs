@@ -19,6 +19,12 @@ namespace Hattrick.Service
 
         #region Properties
 
+        public string UserAgent { get; set; }
+
+        public string ChppId { get; set; }
+
+        public string ChppKey { get; set; }
+
         public string ServerUrl
         {
             get { return _serverUrl; }
@@ -31,11 +37,18 @@ namespace Hattrick.Service
 
         #endregion
 
+        public ConnectionBroker(string userAgent, string chppId, string chppKey)
+        {
+            UserAgent = userAgent;
+            ChppId = chppId;
+            ChppKey = chppKey;
+        }
+
         public void Connect(OnResponse<ConnectionDetailsResponseInfo> onConnect)
         {
-            DoRequest("http://www.hattrick.org/common/menu.asp?outputType=XML", delegate(ConnectionDetailsResponseInfo connectionDetails)
+            DoRequest("http://stage.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
             {
-                _serverUrl = connectionDetails.RecommendedUrl;
+                _serverUrl = connectionDetails.RecommendedUrl.Value;
                 _serverDate = connectionDetails.FetchedDate.Value;
 
                 if (onConnect != null) onConnect(connectionDetails);
@@ -44,7 +57,7 @@ namespace Hattrick.Service
 
         public void Login(string username, string securityCode, OnResponse<BaseResponseInfo> onLogin)
         {
-            DoRequest("/common/default.asp?outputType=XML&actionType=login&loginType=CHPP&loginName=" + username + "&readonlyPassword=" + securityCode, onLogin);
+            DoRequest("/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" + securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey, onLogin);
         }
 
         //public void GetTeamDetails(int teamID, OnResponse<XDocument> onGetTeamDetails)
@@ -109,7 +122,7 @@ namespace Hattrick.Service
         }
         public void GetRegionDetails(int regionID, OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
         {
-            string sUrl = "/common/regionDetails.asp?outputType=XML&actionType=view";
+            string sUrl = "/chppxml.axd?file=regionDetails";
 
             if (regionID != 0) sUrl += "&regionID=" + regionID;
 
@@ -123,7 +136,7 @@ namespace Hattrick.Service
         }
         public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
         {
-            string sUrl = "/common/arenaDetails.asp?outputType=XML&actionType=view";
+            string sUrl = "/chppxml.axd?file=arenaDetails";
 
             if (arenaDetailsRequestInfo.ArenaId != 0) sUrl += "&arenaID=" + arenaDetailsRequestInfo.ArenaId;
             if (arenaDetailsRequestInfo.StatsType != ArenaDetailsRequestInfo.StatsTypeEnum.MyArena) sUrl += "&StatsType=" + arenaDetailsRequestInfo.StatsType.ToString();
@@ -154,13 +167,13 @@ namespace Hattrick.Service
         {
             if (_serverUrl != string.Empty) url = _serverUrl + url;
 
-            WebRequest cRequest = WebRequest.Create(url);
+            WebRequest cRequest = HttpWebRequest.Create(url);
 
             cRequest.Headers.Add("Cookie", _serverCookies);
 
             cRequest.BeginGetResponse(delegate(IAsyncResult asyncResult)
             {
-                WebResponse cResponse = cRequest.EndGetResponse(asyncResult);
+                HttpWebResponse cResponse = (HttpWebResponse)cRequest.EndGetResponse(asyncResult);
 
                 _serverCookies = cResponse.Headers.Get("Set-Cookie");
 

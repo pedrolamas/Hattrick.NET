@@ -14,6 +14,7 @@ namespace Hattrick.Test
 {
     public partial class frmMain : Form
     {
+        private const long BASE_TABLE_ID = (long)0x40000001;
         public frmMain()
         {
             InitializeComponent();
@@ -21,23 +22,34 @@ namespace Hattrick.Test
 
         private void btDoIt_Click(object sender, EventArgs e)
         {
-            ConnectionBroker hattrickBroker = new Hattrick.Service.ConnectionBroker();
+            MessageBox.Show((BASE_TABLE_ID).ToString());
 
-            hattrickBroker.Connect(delegate(ConnectionDetailsResponseInfo connectionDetails)
-            {
-                hattrickBroker.Login(txtUsername.Text, txtSecurityCode.Text, delegate(BaseResponseInfo responseInfo)
-                {
-                    hattrickBroker.GetRegionDetails(delegate(RegionDetailsResponseInfo regionDetails)
-                    {
-                        MessageBox.Show(regionDetails.League.LeagueName.Value);
-                    });
+            //ConnectionBroker hattrickBroker = new Hattrick.Service.ConnectionBroker();
 
-                    hattrickBroker.GetArenaDetails(delegate(ArenaDetailsResponseInfo arenaDetails)
-                    {
-                        MessageBox.Show(arenaDetails.Arena.ArenaId.Value.ToString());
-                    });
-                });
-            });
+            //hattrickBroker.Connect(delegate(ConnectionDetailsResponseInfo connectionDetails)
+            //{
+            //    hattrickBroker.Login(txtUsername.Text, txtSecurityCode.Text, delegate(BaseResponseInfo responseInfo)
+            //    {
+            //        hattrickBroker.GetRegionDetails(delegate(RegionDetailsResponseInfo regionDetails)
+            //        {
+            //            MessageBox.Show(regionDetails.League.LeagueName.Value);
+            //        });
+
+            //        new ArenaDetailsRequest()
+            //        {
+            //            ArenaId = 100
+            //        }
+            //        .GetArenaDetails(hattrickBroker, delegate(ArenaDetailsResponseInfo arenaDetails)
+            //        {
+            //            MessageBox.Show(arenaDetails.Arena.ArenaName.Value);
+            //        });
+
+            //        hattrickBroker.GetArenaDetails(new ArenaDetailsRequestInfo() { ArenaId = 100 }, delegate(ArenaDetailsResponseInfo arenaDetails)
+            //        {
+            //            MessageBox.Show(arenaDetails.Arena.ArenaName.Value);
+            //        });
+            //    });
+            //});
         }
     }
 }
