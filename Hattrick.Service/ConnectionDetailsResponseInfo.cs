@@ -12,7 +12,7 @@ namespace Hattrick.Service
         #region Properties
 
         [XmlElement("RecommendedURL")]
-        public string RecommendedUrl { get; set; }
+        public GenericNode<string> RecommendedUrl { get; set; }
 
         #endregion
     }

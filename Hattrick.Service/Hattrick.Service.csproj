@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2E0B8AF0-C485-4129-B9F6-3342E45B0877}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -46,14 +46,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArenaDetailsRequestInfo.cs" />
-    <Compile Include="ArenaDetailsResponseInfo.cs" />
+    <Compile Include="ArenaDetailsResponseInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="BaseRequestInfo.cs" />
+    <Compile Include="ConnectionBroker.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ConnectionDetailsResponseInfo.cs" />
     <Compile Include="DateTimeNode.cs" />
     <Compile Include="ErrorDetailsResponseInfo.cs" />
     <Compile Include="GenericNode.cs" />
     <Compile Include="BaseResponseInfo.cs" />
-    <Compile Include="ConnectionBroker.cs" />
     <Compile Include="HattrickException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegionDetailsResponseInfo.cs" />
