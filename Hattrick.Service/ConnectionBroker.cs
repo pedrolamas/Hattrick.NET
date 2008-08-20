@@ -55,9 +55,14 @@ namespace Hattrick.Service
             });
         }
 
-        public void Login(string username, string securityCode, OnResponse<BaseResponseInfo> onLogin)
+        public void LogIn(string username, string securityCode, OnResponse<LoginResponseInfo> onLogIn)
         {
-            DoRequest("/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" + securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey, onLogin);
+            DoRequest("/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" + securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey, onLogIn);
+        }
+
+        public void LogOut(string username, string securityCode, OnResponse<LoginResponseInfo> onLogOut)
+        {
+            DoRequest("/chppxml.axd?file=login&actionType=logout", onLogOut);
         }
 
         //public void GetTeamDetails(int teamID, OnResponse<XDocument> onGetTeamDetails)
@@ -167,8 +172,9 @@ namespace Hattrick.Service
         {
             if (_serverUrl != string.Empty) url = _serverUrl + url;
 
-            WebRequest cRequest = HttpWebRequest.Create(url);
+            HttpWebRequest cRequest = (HttpWebRequest)HttpWebRequest.Create(url);
 
+            cRequest.UserAgent = UserAgent;
             cRequest.Headers.Add("Cookie", _serverCookies);
 
             cRequest.BeginGetResponse(delegate(IAsyncResult asyncResult)
