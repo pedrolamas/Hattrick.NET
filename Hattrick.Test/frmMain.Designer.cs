@@ -33,6 +33,10 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtSecurityCode = new System.Windows.Forms.TextBox();
             this.btDoIt = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtChppId = new System.Windows.Forms.TextBox();
+            this.txtChppKey = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -69,26 +73,65 @@
             // 
             // btDoIt
             // 
-            this.btDoIt.Location = new System.Drawing.Point(72, 74);
+            this.btDoIt.Location = new System.Drawing.Point(73, 128);
             this.btDoIt.Name = "btDoIt";
             this.btDoIt.Size = new System.Drawing.Size(121, 28);
-            this.btDoIt.TabIndex = 4;
+            this.btDoIt.TabIndex = 8;
             this.btDoIt.Text = "Do It!";
             this.btDoIt.UseVisualStyleBackColor = true;
             this.btDoIt.Click += new System.EventHandler(this.btDoIt_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(14, 69);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(52, 15);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "CHPP ID";
+            // 
+            // txtChppId
+            // 
+            this.txtChppId.Location = new System.Drawing.Point(106, 66);
+            this.txtChppId.Name = "txtChppId";
+            this.txtChppId.Size = new System.Drawing.Size(145, 23);
+            this.txtChppId.TabIndex = 5;
+            // 
+            // txtChppKey
+            // 
+            this.txtChppKey.Location = new System.Drawing.Point(106, 95);
+            this.txtChppKey.Name = "txtChppKey";
+            this.txtChppKey.Size = new System.Drawing.Size(145, 23);
+            this.txtChppKey.TabIndex = 7;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(14, 98);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(60, 15);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "CHPP Key";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(266, 115);
+            this.ClientSize = new System.Drawing.Size(266, 168);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.txtChppKey);
+            this.Controls.Add(this.txtChppId);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.btDoIt);
             this.Controls.Add(this.txtSecurityCode);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtUsername);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "frmMain";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Hattrick.Service Test";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -102,6 +145,10 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtSecurityCode;
         private System.Windows.Forms.Button btDoIt;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtChppId;
+        private System.Windows.Forms.TextBox txtChppKey;
+        private System.Windows.Forms.Label label4;
     }
 }
 
