@@ -45,21 +45,47 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AchievementsResponseInfo.cs" />
+    <Compile Include="AlliancesResponseInfo.cs" />
     <Compile Include="ArenaDetailsRequestInfo.cs" />
     <Compile Include="ArenaDetailsResponseInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BaseRequestInfo.cs" />
+    <Compile Include="BookmarksResponseInfo.cs" />
     <Compile Include="BooleanNode.cs" />
-    <Compile Include="ConnectionBroker.cs">
+    <Compile Include="ChallangesResponseInfo.cs" />
+    <Compile Include="ClubDetailsResponseInfo.cs" />
+    <Compile Include="Connection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ConnectionDetailsResponseInfo.cs" />
+    <Compile Include="AllianceDetailsResponseInfo.cs" />
+    <Compile Include="TrainingEventsResponseInfo.cs" />
+    <Compile Include="TransfersPlayerResponseInfo.cs" />
+    <Compile Include="TransfersTeamResponseInfo.cs" />
+    <Compile Include="TrainingResponseInfo.cs" />
+    <Compile Include="TeamDetailsResponseInfo.cs" />
+    <Compile Include="SearchResponseInfo.cs" />
+    <Compile Include="PlayerEventsResponseInfo.cs" />
+    <Compile Include="PlayerDetailsResponseInfo.cs" />
+    <Compile Include="PlayersResponseInfo.cs" />
+    <Compile Include="MatchOrdersResponseInfo.cs" />
+    <Compile Include="MatchLineupResponseInfo.cs" />
+    <Compile Include="MatchDetailsResponseInfo.cs" />
+    <Compile Include="LeagueFixturesResponseInfo.cs" />
+    <Compile Include="MatchesArchiveResponseInfo.cs" />
+    <Compile Include="MatchesResponseInfo.cs" />
+    <Compile Include="FansResponseInfo.cs" />
+    <Compile Include="EconomyResponseInfo.cs" />
+    <Compile Include="CupMatchesResponseInfo.cs" />
     <Compile Include="DateTimeNode.cs" />
     <Compile Include="ErrorDetailsResponseInfo.cs" />
     <Compile Include="GenericNode.cs" />
     <Compile Include="BaseResponseInfo.cs" />
     <Compile Include="HattrickException.cs" />
+    <Compile Include="LeagueDetailsResponseInfo.cs" />
+    <Compile Include="LiveMatchesResponseInfo.cs" />
     <Compile Include="LoginResponseInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegionDetailsResponseInfo.cs" />

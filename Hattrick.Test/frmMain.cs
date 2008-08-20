@@ -21,7 +21,7 @@ namespace Hattrick.Test
 
         private void btDoIt_Click(object sender, EventArgs e)
         {
-            ConnectionBroker hattrickBroker = new Hattrick.Service.ConnectionBroker("Hattrick.net 0.1", txtChppId.Text, txtChppKey.Text);
+            Connection hattrickBroker = new Hattrick.Service.Connection("Hattrick.net 0.1", txtChppId.Text, txtChppKey.Text);
 
             hattrickBroker.Connect(delegate(ConnectionDetailsResponseInfo connectionDetails)
             {
