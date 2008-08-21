@@ -310,7 +310,7 @@ namespace Hattrick.Service
 
         public void Connect(OnResponse<ConnectionDetailsResponseInfo> onConnect)
         {
-            DoRequest("http://stage.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
+            DoRequest("http://www.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
             {
                 _serverUrl = connectionDetails.RecommendedUrl.Value;
                 _serverDate = connectionDetails.FetchedDate.Value;
