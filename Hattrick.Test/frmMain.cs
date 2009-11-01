@@ -17,11 +17,31 @@ namespace Hattrick.Test
         public frmMain()
         {
             InitializeComponent();
+
+            try
+            {
+                txtUsername.Text=Application.UserAppDataRegistry.GetValue("UserId") as string;
+                txtSecurityCode.Text = Application.UserAppDataRegistry.GetValue("SecurityCode") as string;
+                txtChppId.Text = Application.UserAppDataRegistry.GetValue("ChppId") as string;
+                txtChppKey.Text = Application.UserAppDataRegistry.GetValue("ChppKey") as string;
+
+            }
+            catch
+            {
+            }
         }
 
         private void btDoIt_Click(object sender, EventArgs e)
         {
-            Connection hattrickBroker = new Hattrick.Service.Connection("Hattrick.net 0.1", txtChppId.Text, txtChppKey.Text);
+            if(chkSave.Checked)
+            {
+                Application.UserAppDataRegistry.SetValue("UserId",txtUsername.Text);
+                Application.UserAppDataRegistry.SetValue("SecurityCode", txtSecurityCode.Text);
+                Application.UserAppDataRegistry.SetValue("ChppId", txtChppId.Text);
+                Application.UserAppDataRegistry.SetValue("ChppKey", txtChppKey.Text);
+            }
+
+            Connection hattrickBroker = new Hattrick.Service.Connection("Hattrick Module Suite for DotNetNuke", txtChppId.Text, txtChppKey.Text);
 
             hattrickBroker.Connect(delegate(ConnectionDetailsResponseInfo connectionDetails)
             {
