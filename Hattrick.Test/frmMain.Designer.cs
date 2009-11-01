@@ -37,6 +37,7 @@
             this.txtChppId = new System.Windows.Forms.TextBox();
             this.txtChppKey = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.chkSave = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
@@ -73,7 +74,7 @@
             // 
             // btDoIt
             // 
-            this.btDoIt.Location = new System.Drawing.Point(73, 128);
+            this.btDoIt.Location = new System.Drawing.Point(127, 146);
             this.btDoIt.Name = "btDoIt";
             this.btDoIt.Size = new System.Drawing.Size(121, 28);
             this.btDoIt.TabIndex = 8;
@@ -113,11 +114,22 @@
             this.label4.TabIndex = 6;
             this.label4.Text = "CHPP Key";
             // 
+            // chkSave
+            // 
+            this.chkSave.AutoSize = true;
+            this.chkSave.Location = new System.Drawing.Point(106, 121);
+            this.chkSave.Name = "chkSave";
+            this.chkSave.Size = new System.Drawing.Size(74, 19);
+            this.chkSave.TabIndex = 9;
+            this.chkSave.Text = "Save info";
+            this.chkSave.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(266, 168);
+            this.ClientSize = new System.Drawing.Size(260, 186);
+            this.Controls.Add(this.chkSave);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtChppKey);
             this.Controls.Add(this.txtChppId);
@@ -149,6 +161,7 @@
         private System.Windows.Forms.TextBox txtChppId;
         private System.Windows.Forms.TextBox txtChppKey;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkSave;
     }
 }
 
