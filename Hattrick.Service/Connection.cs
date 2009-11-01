@@ -34,7 +34,6 @@ namespace Hattrick.Service
         {
             get { return _serverDate; }
         }
-
         #endregion
 
         public Connection(string userAgent, string chppId, string chppKey)
@@ -195,15 +194,31 @@ namespace Hattrick.Service
         #endregion
 
         #region /chppxml.axd?file=login
-
+        private string LoginUrl(string username, string securityCode)
+        {
+            return "/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" +
+                   securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey;
+        }
         public void LogIn(string username, string securityCode, OnResponse<LoginResponseInfo> onLogIn)
         {
-            DoRequest("/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" + securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey, onLogIn);
+            DoRequest(LoginUrl(username, securityCode), onLogIn);
+        }
+        public LoginResponseInfo LogIn(string username, string securityCode)
+        {
+            return DoRequest<LoginResponseInfo>(LoginUrl(username, securityCode));
         }
 
+        private string LogOutUrl()
+        {
+            return "/chppxml.axd?file=login&actionType=logout";
+        }
         public void LogOut(OnResponse<LoginResponseInfo> onLogOut)
         {
-            DoRequest("/chppxml.axd?file=login&actionType=logout", onLogOut);
+            DoRequest(LogOutUrl(), onLogOut);
+        }
+        public LoginResponseInfo LogOut()
+        {
+            return DoRequest<LoginResponseInfo>(LogOutUrl());
         }
 
         #endregion
@@ -318,6 +333,16 @@ namespace Hattrick.Service
                 if (onConnect != null) onConnect(connectionDetails);
             });
         }
+        public ConnectionDetailsResponseInfo Connect()
+        {
+            ConnectionDetailsResponseInfo connectionDetails;
+            connectionDetails = DoRequest<ConnectionDetailsResponseInfo>("http://www.hattrick.org/chppxml.axd?file=servers");
+
+            _serverUrl = connectionDetails.RecommendedUrl.Value;
+            _serverDate = connectionDetails.FetchedDate.Value;
+
+            return connectionDetails;
+        }
 
         #endregion
 
@@ -411,59 +436,106 @@ namespace Hattrick.Service
         //    DoRequest("/common/chppxml.axd?file=worlddetails", onGetWorldDetails);
         //}
 
+        #region Request Methods
+
+        /// <summary>
+        /// Perform async request at Hattrick CHPP Service
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <param name="onResponse"></param>
         public void DoRequest<T>(string url, OnResponse<T> onResponse) where T : BaseResponseInfo
+        {
+            HttpWebRequest cRequest = GetWebRequest(url);
+
+            try
+            {
+                cRequest.BeginGetResponse(delegate(IAsyncResult asyncResult)
+                    {
+                        HttpWebResponse cResponse = (HttpWebResponse)cRequest.EndGetResponse(asyncResult);
+
+                        if (onResponse != null)
+                        {
+                                onResponse(ProcessWebResponse<T>(cResponse));
+                        }
+
+                    }, null);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Perform sync request at Hattrick CHPP Service
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public T DoRequest<T>(string url)
         {
             if (_serverUrl != string.Empty) url = _serverUrl + url;
 
             HttpWebRequest cRequest = (HttpWebRequest)HttpWebRequest.Create(url);
 
+            HttpWebResponse cResponse = (HttpWebResponse) cRequest.GetResponse();
+
+            return ProcessWebResponse<T>(cResponse);
+        }
+
+        private HttpWebRequest GetWebRequest(string url)
+        {
+            if (_serverUrl != string.Empty) url = _serverUrl + url;
+
+            HttpWebRequest cRequest = GetWebRequest(url);
+
             cRequest.UserAgent = UserAgent;
             cRequest.Headers.Add("Cookie", _serverCookies);
+            return cRequest;
+        }
 
-            cRequest.BeginGetResponse(delegate(IAsyncResult asyncResult)
+        private T ProcessWebResponse<T>(HttpWebResponse cResponse)
+        {
+            _serverCookies = cResponse.Headers.Get("Set-Cookie");
+
+            string sResponse;
+
+            using (StreamReader strResponseReader = new StreamReader(cResponse.GetResponseStream()))
             {
-                HttpWebResponse cResponse = (HttpWebResponse)cRequest.EndGetResponse(asyncResult);
+                sResponse = strResponseReader.ReadToEnd();
+            }
 
-                _serverCookies = cResponse.Headers.Get("Set-Cookie");
-
-                string sResponse;
-
-                using (StreamReader strResponseReader = new StreamReader(cResponse.GetResponseStream()))
+            // Find out if errors have occurred
+            XmlSerializer cXmlSerializer = new XmlSerializer(typeof(ErrorDetailsResponseInfo));
+            try
+            {
+                // We'll deserialize the responsestring to an ErrorDetailsResponseInfo object to see if
+                // something went wrong
+                using (StringReader strResponseReader = new StringReader(sResponse))
                 {
-                    sResponse = strResponseReader.ReadToEnd();
-                }
+                    ErrorDetailsResponseInfo cErrorDetailsResponseInfo = (ErrorDetailsResponseInfo)cXmlSerializer.Deserialize(strResponseReader);
 
-                XmlSerializer cXmlSerializer = new XmlSerializer(typeof(ErrorDetailsResponseInfo));
-
-                try
-                {
-                    using (StringReader strResponseReader = new StringReader(sResponse))
+                    if (cErrorDetailsResponseInfo.Error != null)
                     {
-                        ErrorDetailsResponseInfo cErrorDetailsResponseInfo = (ErrorDetailsResponseInfo)cXmlSerializer.Deserialize(strResponseReader);
-
                         throw new HattrickException(cErrorDetailsResponseInfo.Error.Value);
                     }
-                }
-                catch (HattrickException ex)
-                {
-                    throw ex;
-                }
-                catch
-                {
-                }
 
-                if (onResponse != null)
-                {
-                    using (StringReader strResponseReader = new StringReader(sResponse))
-                    {
-                        cXmlSerializer = new XmlSerializer(typeof(T));
-
-                        T cResponse2 = (T)cXmlSerializer.Deserialize(strResponseReader);
-
-                        onResponse(cResponse2);
-                    }
                 }
-            }, null);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            using (StringReader strResponseReader = new StringReader(sResponse))
+            {
+                cXmlSerializer = new XmlSerializer(typeof(T));
+
+                return (T)cXmlSerializer.Deserialize(strResponseReader);
+            }
         }
+
+        #endregion
     }
 }
