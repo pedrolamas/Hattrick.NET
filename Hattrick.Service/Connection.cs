@@ -14,7 +14,7 @@ namespace Hattrick.Service
     public class Connection
     {
         private string _serverUrl = string.Empty;
-        private string _serverCookies = string.Empty;
+        private Dictionary<string, string> _serverCookies = new Dictionary<string, string>();
         private DateTime _serverDate;
 
         #region Properties
@@ -34,6 +34,38 @@ namespace Hattrick.Service
         {
             get { return _serverDate; }
         }
+
+        public string ServerCookies
+        {
+            get
+            {
+                var retval = string.Empty;
+                foreach (var cookie in _serverCookies)
+                {
+                    retval += string.Format("{0}={1};", cookie.Key, cookie.Value);
+                }
+                return retval + " HttpOnly";
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value)) return;
+
+                var cookies = value; 
+                foreach (var cookie in cookies.Split(';'))
+                {
+                    var keyval = cookie.Split('=');
+
+                    if (keyval.Length == 2)
+                    {
+                        _serverCookies[keyval[0]] = keyval[1];
+                    }
+                }  
+            }
+        }
+
+        public bool IsConnected { get; set; }
+        public bool IsAuthenticated { get; set; }
+
         #endregion
 
         public Connection(string userAgent, string chppId, string chppKey)
@@ -42,6 +74,179 @@ namespace Hattrick.Service
             ChppId = chppId;
             ChppKey = chppKey;
         }
+
+        #region Implemented Requests
+        #region /chppxml.axd?file=arenaDetails
+        private string GetArenaDetailsUrl(ArenaDetailsRequestInfo arenaDetailsRequestInfo)
+        {
+            string sUrl = "/chppxml.axd?file=arenaDetails";
+
+            if (arenaDetailsRequestInfo.ArenaId != 0) sUrl += "&arenaID=" + arenaDetailsRequestInfo.ArenaId;
+            if (arenaDetailsRequestInfo.StatsType != ArenaDetailsRequestInfo.StatsTypeEnum.MyArena) sUrl += "&StatsType=" + arenaDetailsRequestInfo.StatsType.ToString();
+            if (arenaDetailsRequestInfo.MatchType != ArenaDetailsRequestInfo.MatchTypeEnum.All) sUrl += "&MatchType=" + arenaDetailsRequestInfo.MatchType.ToString();
+            if (arenaDetailsRequestInfo.FirstDate != DateTime.MinValue) sUrl += "&FirstDate=" + arenaDetailsRequestInfo.FirstDate.ToString("yyyy-MM-dd HH:mm:ss");
+            if (arenaDetailsRequestInfo.LastDate != DateTime.MinValue) sUrl += "&LastDate=" + arenaDetailsRequestInfo.LastDate.ToString("yyyy-MM-dd HH:mm:ss");
+            if (arenaDetailsRequestInfo.StatsLeagueID != 0) sUrl += "&StatsLeagueID=" + arenaDetailsRequestInfo.StatsLeagueID;
+
+            return sUrl;
+        }
+        public void GetArenaDetails(OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
+        {
+            GetArenaDetails(new ArenaDetailsRequestInfo(), onGetArenaDetails);
+        }
+        public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
+        {
+            DoRequest(GetArenaDetailsUrl(arenaDetailsRequestInfo), onGetArenaDetails);
+        }
+        public ArenaDetailsResponseInfo GetArenaDetails()
+        {
+            return GetArenaDetails(new ArenaDetailsRequestInfo());
+        }
+        public ArenaDetailsResponseInfo GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo)
+        {
+            return DoRequest <ArenaDetailsResponseInfo>(GetArenaDetailsUrl(arenaDetailsRequestInfo));
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=club
+
+        public void GetClubDetails(OnResponse<ClubDetailsResponseInfo> onGetClubDetails)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=live
+
+        public void AddLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onAddLiveMatch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onDeleteLiveMatch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearLiveMatches(OnResponse<LiveMatchesResponseInfo> onClearLiveMatches)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetLiveMatches(OnResponse<LiveMatchesResponseInfo> onGetLiveMatches)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=login
+        private string LoginUrl(string username, string securityCode)
+        {
+            return "/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" +
+                   securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey;
+        }
+        public void LogIn(string username, string securityCode, OnResponse<LoginResponseInfo> onLogIn)
+        {
+            DoRequest(LoginUrl(username, securityCode), delegate(LoginResponseInfo loginResponse)
+                                                            {
+                                                                IsAuthenticated = (loginResponse.IsAuthenticated.Value);
+
+                                                                if(onLogIn!=null) onLogIn(loginResponse);
+                                                            });
+        }
+        public LoginResponseInfo LogIn(string username, string securityCode)
+        {
+            return DoRequest<LoginResponseInfo>(LoginUrl(username, securityCode));
+        }
+
+        private string LogOutUrl()
+        {
+            return "/chppxml.axd?file=login&actionType=logout";
+        }
+        public void LogOut(OnResponse<LoginResponseInfo> onLogOut)
+        {
+            DoRequest(LogOutUrl(), delegate(LoginResponseInfo loginResponseInfo)
+                                       {
+                                           IsAuthenticated = (loginResponseInfo.IsAuthenticated.Value);
+
+                                           if (onLogOut != null) onLogOut(loginResponseInfo);
+                                       });
+        }
+        public LoginResponseInfo LogOut()
+        {
+            var retval = DoRequest<LoginResponseInfo>(LogOutUrl());
+
+            IsAuthenticated = retval.IsAuthenticated.Value;
+
+            return retval;
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=regionDetails
+        private string GetRegionDetailsUrl(int regionID)
+        {
+            string sUrl = "/chppxml.axd?file=regionDetails";
+
+            if (regionID != 0) sUrl += "&regionID=" + regionID;
+            return sUrl;
+        }
+        public void GetRegionDetails(OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
+        {
+            GetRegionDetails(0, onGetRegionDetails);
+        }
+        public void GetRegionDetails(int regionID, OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
+        {
+            string sUrl = GetRegionDetailsUrl(regionID);
+
+            DoRequest(sUrl, onGetRegionDetails);
+        }
+        public RegionDetailsResponseInfo GetRegionDetails()
+        {
+            return GetRegionDetails(0);
+        }
+        public RegionDetailsResponseInfo GetRegionDetails(int regionID)
+        {
+            string sUrl = GetRegionDetailsUrl(regionID);
+
+            return DoRequest<RegionDetailsResponseInfo>(sUrl);
+        }
+        #endregion
+
+        #region /chppxml.axd?file=servers
+
+        public void Connect(OnResponse<ConnectionDetailsResponseInfo> onConnect)
+        {
+            DoRequest("http://www.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
+                                                                              {
+                                                                                  _serverUrl = connectionDetails.RecommendedUrl.Value;
+                                                                                  _serverDate = connectionDetails.FetchedDate.Value;
+                                                                                  IsConnected = true;
+
+                                                                                  if (onConnect != null) onConnect(connectionDetails);
+                                                                              });
+        }
+        public ConnectionDetailsResponseInfo Connect()
+        {
+            ConnectionDetailsResponseInfo connectionDetails;
+            connectionDetails = DoRequest<ConnectionDetailsResponseInfo>("http://www.hattrick.org/chppxml.axd?file=servers");
+
+            _serverUrl = connectionDetails.RecommendedUrl.Value;
+            _serverDate = connectionDetails.FetchedDate.Value;
+
+            IsConnected = true;
+
+            return connectionDetails;
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Not Yet Implemented Requests
 
         #region /chppxml.axd?file=achievements (TODO)
 
@@ -53,28 +258,6 @@ namespace Hattrick.Service
         public void GetAchievements(int userId, OnResponse<AchievementsResponseInfo> onGetAchievements)
         {
             throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=arenaDetails
-
-        public void GetArenaDetails(OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
-        {
-            GetArenaDetails(new ArenaDetailsRequestInfo(), onGetArenaDetails);
-        }
-        public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
-        {
-            string sUrl = "/chppxml.axd?file=arenaDetails";
-
-            if (arenaDetailsRequestInfo.ArenaId != 0) sUrl += "&arenaID=" + arenaDetailsRequestInfo.ArenaId;
-            if (arenaDetailsRequestInfo.StatsType != ArenaDetailsRequestInfo.StatsTypeEnum.MyArena) sUrl += "&StatsType=" + arenaDetailsRequestInfo.StatsType.ToString();
-            if (arenaDetailsRequestInfo.MatchType != ArenaDetailsRequestInfo.MatchTypeEnum.All) sUrl += "&MatchType=" + arenaDetailsRequestInfo.MatchType.ToString();
-            if (arenaDetailsRequestInfo.FirstDate != DateTime.MinValue) sUrl += "&FirstDate=" + arenaDetailsRequestInfo.FirstDate.ToString("yyyy-MM-dd HH:mm:ss");
-            if (arenaDetailsRequestInfo.LastDate != DateTime.MinValue) sUrl += "&LastDate=" + arenaDetailsRequestInfo.LastDate.ToString("yyyy-MM-dd HH:mm:ss");
-            if (arenaDetailsRequestInfo.StatsLeagueID != 0) sUrl += "&StatsLeagueID=" + arenaDetailsRequestInfo.StatsLeagueID;
-
-            DoRequest(sUrl, onGetArenaDetails);
         }
 
         #endregion
@@ -109,15 +292,6 @@ namespace Hattrick.Service
         #region /chppxml.axd?file=challanges (TODO)
 
         public void GetChallanges(OnResponse<ChallangesResponseInfo> onGetChallanges)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=club
-
-        public void GetClubDetails(OnResponse<ClubDetailsResponseInfo> onGetClubDetails)
         {
             throw new NotImplementedException();
         }
@@ -165,60 +339,6 @@ namespace Hattrick.Service
         public void GetLeagueFixtures(OnResponse<LeagueFixturesResponseInfo> onGetLeagueFixtures)
         {
             throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=live
-
-        public void AddLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onAddLiveMatch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onDeleteLiveMatch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearLiveMatches(OnResponse<LiveMatchesResponseInfo> onClearLiveMatches)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetLiveMatches(OnResponse<LiveMatchesResponseInfo> onGetLiveMatches)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=login
-        private string LoginUrl(string username, string securityCode)
-        {
-            return "/chppxml.axd?file=login&actionType=login&loginname=" + username + "&readonlypassword=" +
-                   securityCode + "&chppID=" + ChppId + "&chppKey=" + ChppKey;
-        }
-        public void LogIn(string username, string securityCode, OnResponse<LoginResponseInfo> onLogIn)
-        {
-            DoRequest(LoginUrl(username, securityCode), onLogIn);
-        }
-        public LoginResponseInfo LogIn(string username, string securityCode)
-        {
-            return DoRequest<LoginResponseInfo>(LoginUrl(username, securityCode));
-        }
-
-        private string LogOutUrl()
-        {
-            return "/chppxml.axd?file=login&actionType=logout";
-        }
-        public void LogOut(OnResponse<LoginResponseInfo> onLogOut)
-        {
-            DoRequest(LogOutUrl(), onLogOut);
-        }
-        public LoginResponseInfo LogOut()
-        {
-            return DoRequest<LoginResponseInfo>(LogOutUrl());
         }
 
         #endregion
@@ -295,53 +415,11 @@ namespace Hattrick.Service
 
         #endregion
 
-        #region /chppxml.axd?file=regionDetails
-
-        public void GetRegionDetails(OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
-        {
-            GetRegionDetails(0, onGetRegionDetails);
-        }
-        public void GetRegionDetails(int regionID, OnResponse<RegionDetailsResponseInfo> onGetRegionDetails)
-        {
-            string sUrl = "/chppxml.axd?file=regionDetails";
-
-            if (regionID != 0) sUrl += "&regionID=" + regionID;
-
-            DoRequest(sUrl, onGetRegionDetails);
-        }
-
-        #endregion
-
         #region /chppxml.axd?file=search (TODO)
 
         public void Search(OnResponse<SearchResponseInfo> onSearch)
         {
             throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=servers
-
-        public void Connect(OnResponse<ConnectionDetailsResponseInfo> onConnect)
-        {
-            DoRequest("http://www.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
-            {
-                _serverUrl = connectionDetails.RecommendedUrl.Value;
-                _serverDate = connectionDetails.FetchedDate.Value;
-
-                if (onConnect != null) onConnect(connectionDetails);
-            });
-        }
-        public ConnectionDetailsResponseInfo Connect()
-        {
-            ConnectionDetailsResponseInfo connectionDetails;
-            connectionDetails = DoRequest<ConnectionDetailsResponseInfo>("http://www.hattrick.org/chppxml.axd?file=servers");
-
-            _serverUrl = connectionDetails.RecommendedUrl.Value;
-            _serverDate = connectionDetails.FetchedDate.Value;
-
-            return connectionDetails;
         }
 
         #endregion
@@ -388,6 +466,8 @@ namespace Hattrick.Service
         {
             throw new NotImplementedException();
         }
+
+        #endregion
 
         #endregion
 
@@ -456,7 +536,7 @@ namespace Hattrick.Service
 
                         if (onResponse != null)
                         {
-                                onResponse(ProcessWebResponse<T>(cResponse));
+                            onResponse(ProcessWebResponse<T>(cResponse));
                         }
 
                     }, null);
@@ -475,29 +555,27 @@ namespace Hattrick.Service
         /// <returns></returns>
         public T DoRequest<T>(string url)
         {
-            if (_serverUrl != string.Empty) url = _serverUrl + url;
+            HttpWebRequest cRequest = GetWebRequest(url);
 
-            HttpWebRequest cRequest = (HttpWebRequest)HttpWebRequest.Create(url);
-
-            HttpWebResponse cResponse = (HttpWebResponse) cRequest.GetResponse();
+            HttpWebResponse cResponse = (HttpWebResponse)cRequest.GetResponse();
 
             return ProcessWebResponse<T>(cResponse);
         }
 
         private HttpWebRequest GetWebRequest(string url)
         {
-            if (_serverUrl != string.Empty) url = _serverUrl + url;
+            if (_serverUrl != string.Empty && !url.StartsWith("http://")) url = _serverUrl + url;
 
-            HttpWebRequest cRequest = GetWebRequest(url);
+            HttpWebRequest cRequest = (HttpWebRequest)WebRequest.Create(url);
 
             cRequest.UserAgent = UserAgent;
-            cRequest.Headers.Add("Cookie", _serverCookies);
+            cRequest.Headers.Add("Cookie", ServerCookies);
             return cRequest;
         }
 
         private T ProcessWebResponse<T>(HttpWebResponse cResponse)
         {
-            _serverCookies = cResponse.Headers.Get("Set-Cookie");
+            ServerCookies = cResponse.Headers.Get("Set-Cookie");
 
             string sResponse;
 
