@@ -51,6 +51,7 @@
     <Compile Include="ArenaDetailsResponseInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BaseClasses\ChppRequestBase.cs" />
     <Compile Include="BaseRequestInfo.cs" />
     <Compile Include="BookmarksResponseInfo.cs" />
     <Compile Include="BooleanNode.cs" />
