@@ -5,10 +5,8 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Gallio.Framework;
 using Hattrick.Service;
-using MbUnit.Framework;
-using MbUnit.Framework.ContractVerifiers;
+using NUnit.Framework;
 
 namespace Tests
 {
@@ -16,158 +14,171 @@ namespace Tests
     [TestFixture]
     public class ConnectionTest
     {
-        private string Username = "";
-        private string SecurityCode = "";
-        private string ChppId = "";
-        private string ChppKey = "";
-        private Connection hattrickBroker;
+        private string _username = "";
+        private string _securityCode = "";
+        private string _chppId = "";
+        private string _chppKey = "";
+        private Connection _hattrickBroker;
 
-        public ConnectionTest()
+        private bool DoConnect()
         {
-            try
+            if (!_hattrickBroker.IsConnected)
             {
-                System.Xml.XmlDocument xmlDoc = new XmlDocument();
+                return _hattrickBroker.Connect().RecommendedUrl.Value.Length > 0;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool DoLogin()
+        {
+            if (!_hattrickBroker.IsAuthenticated)
+            {
+                return _hattrickBroker.LogIn(_username, _securityCode).IsAuthenticated.Value;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void DoLogout()
+        {
+            if (!_hattrickBroker.IsAuthenticated)
+            {
+                _hattrickBroker.LogOut();
+            }
+        }
+
+        [SetUp]
+        public void Init()
+        {
+                        try
+            {
+                var xmlDoc = new XmlDocument();
                 xmlDoc.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.xml"));
 
-                Username = xmlDoc.GetElementsByTagName("username")[0].InnerText;
-                SecurityCode = xmlDoc.GetElementsByTagName("securitycode")[0].InnerText;
-                ChppId = xmlDoc.GetElementsByTagName("chppid")[0].InnerText;
-                ChppKey = xmlDoc.GetElementsByTagName("chppkey")[0].InnerText;
+                _username = xmlDoc.GetElementsByTagName("username")[0].InnerText;
+                _securityCode = xmlDoc.GetElementsByTagName("securitycode")[0].InnerText;
+                _chppId = xmlDoc.GetElementsByTagName("chppid")[0].InnerText;
+                _chppKey = xmlDoc.GetElementsByTagName("chppkey")[0].InnerText;
 
-                hattrickBroker = new Hattrick.Service.Connection("Hattrick Module Suite for DotNetNuke", ChppId, ChppKey);
+                _hattrickBroker = new Hattrick.Service.Connection("Hattrick Module Suite for DotNetNuke", _chppId, _chppKey);
             }
             catch
             {
                 throw new Exception("Copy config.xml file to '{0}' and fill with your CHPP details.");
             }
+
         }
 
-        private bool doConnect()
+        [TearDown]
+        public void TearDown()
         {
-            if (!hattrickBroker.IsConnected)
-            {
-                return hattrickBroker.Connect().RecommendedUrl.Value.Length > 0;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private bool doLogin()
-        {
-            if (!hattrickBroker.IsAuthenticated)
-            {
-                return hattrickBroker.LogIn(Username, SecurityCode).IsAuthenticated.Value;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        private void doLogout()
-        {
-            if (!hattrickBroker.IsAuthenticated)
-            {
-                hattrickBroker.LogOut();
-            }
         }
 
         [Test]
-        public void ConnectTest()
+        public void Connect_ValidConfig_CanConnect()
         {
-            hattrickBroker.Connect();
+            _hattrickBroker.Connect();
 
-            Assert.AreNotEqual<string>(hattrickBroker.ServerUrl, string.Empty);
+            Assert.AreNotEqual(_hattrickBroker.ServerUrl, string.Empty);
         }
 
         [Test]
-        [DependsOn("ConnectTest")]
-        public void LoginTest()
+        public void LogIn_ValidCredentials_CanLogin()
         {
-            if (!hattrickBroker.IsConnected) hattrickBroker.Connect();
+            if (!_hattrickBroker.IsConnected) _hattrickBroker.Connect();
 
-            LoginResponseInfo responseInfo = hattrickBroker.LogIn(Username, SecurityCode);
+            LoginResponseInfo responseInfo = _hattrickBroker.LogIn(_username, _securityCode);
 
             Assert.IsTrue(responseInfo.IsAuthenticated.Value);
         }
 
         [Test]
-        [DependsOn("ConnectTest")]
-        [DependsOn("LoginTest")]
-        [Row(1223640, "Nou Kampi")]
-        [Row(0, "Users own arena")]
-        public void GetArenaDetailsTest(int arenaId)
+        [TestCase(1223640)]
+        [TestCase(0)]
+        public void GetArenaDetails_ValidArenaId_LoadsArena(int arenaId)
         {
             // Connect if not already connected
-            doConnect();
+            DoConnect();
             // Login if not already logged in
-            bool localLogin = doLogin();
+            bool localLogin = DoLogin();
 
             if (arenaId <= 0)
             {
-                ArenaDetailsResponseInfo arenaDetails = hattrickBroker.GetArenaDetails();
+                ArenaDetailsResponseInfo arenaDetails = _hattrickBroker.GetArenaDetails();
                 Assert.IsNotNull(arenaDetails.Arena.ArenaName, string.Format("Arena of user has ID {0} and is called {1}", arenaDetails.Arena.ArenaId.Value, arenaDetails.Arena.ArenaName.Value));
             }
             else
             {
-                ArenaDetailsResponseInfo arenaDetails = hattrickBroker.GetArenaDetails(new ArenaDetailsRequestInfo() { ArenaId = arenaId });
+                ArenaDetailsResponseInfo arenaDetails = _hattrickBroker.GetArenaDetails(new ArenaDetailsRequestInfo() { ArenaId = arenaId });
                 Assert.IsNotNull(arenaDetails.Arena.ArenaName, String.Format("Arena with ID {0}: {1}", arenaId, arenaDetails.Arena.ArenaName.Value));
             }
 
             // Logout if we logged on too
-            if (localLogin) doLogout();
+            if (localLogin) DoLogout();
         }
 
         [Test]
-        [DependsOn("ConnectTest")]
-        [DependsOn("LoginTest")]
-        [Row(0, "User's own region")]
-        [Row(895, "Region Kuala Lumpur, Malaysia")]
-        public void GetRegionDetailsTest(int regionId)
+        [TestCase(0)]
+        [TestCase(895)]
+        public void GetRegionDetails_ValidId_LoadsRegion(int regionId)
         {
             // Connect if not already connected
-            doConnect();
+            DoConnect();
             // Login if not already logged in
-            bool localLogin = doLogin();
+            bool localLogin = DoLogin();
 
             if (regionId <= 0)
-                Assert.IsNotNull(hattrickBroker.GetRegionDetails().League);
+                Assert.IsNotNull(_hattrickBroker.GetRegionDetails().League);
             else
-                Assert.IsNotNull(hattrickBroker.GetRegionDetails(regionId).League);
+                Assert.IsNotNull(_hattrickBroker.GetRegionDetails(regionId).League);
 
             // Logout if we logged on too
-            if (localLogin) doLogout();
+            if (localLogin) DoLogout();
         }
 
         [Test]
-        [Description("Template test. Also functions as dependancy for logoutTest")]
-        [DependsOn("ConnectTest")]
-        [DependsOn("LoginTest")]
+        public void GetAchievements_LoggedIn_LoadsAchievements()
+        {
+            // Connect if not already connected
+            DoConnect();
+            // Login if not already logged in
+            bool localLogin = DoLogin();
+
+            Assert.IsNotNull(_hattrickBroker.GetAchievements(new AchievementsRequestInfo()).AchievementList);
+
+            // Logout if we logged on too
+            if (localLogin) DoLogout();
+        }
+
+        [Test]
+        [Ignore("Template test.")]
         public void TemplateTest()
         {
             // Connect if not already connected
-            doConnect();
+            DoConnect();
             // Login if not already logged in
-            bool localLogin = doLogin();
+            bool localLogin = DoLogin();
 
             Assert.IsTrue(true);
 
             // Logout if we logged on too
-            if (localLogin) doLogout();
+            if (localLogin) DoLogout();
         }
 
         [Test]
-        [DependsOn("TemplateTest")]
         public void LogoutTest()
         {
             // Connect if not already connected
-            doConnect();
+            DoConnect();
             // Login if not already logged in
-            bool localLogin = doLogin();
+            bool localLogin = DoLogin();
 
-            Assert.IsFalse(hattrickBroker.LogOut().IsAuthenticated.Value);
+            Assert.IsFalse(_hattrickBroker.LogOut().IsAuthenticated.Value);
         }
     }
 }
