@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using Hattrick.Service;
+using Hattrick.Service.Requests;
+using Hattrick.Service.Responses;
 using NUnit.Framework;
 
 namespace Tests
@@ -148,8 +150,33 @@ namespace Tests
             DoConnect();
             // Login if not already logged in
             bool localLogin = DoLogin();
+            var result = _hattrickBroker.GetAchievements(new AchievementsRequestInfo());
 
-            Assert.IsNotNull(_hattrickBroker.GetAchievements(new AchievementsRequestInfo()).AchievementList);
+            Assert.IsNotNull(result.AchievementList);
+            Assert.Greater(result.AchievementList.Count, 0);
+
+            // Logout if we logged on too););
+            if (localLogin) DoLogout();
+        }
+
+        [Test]
+        [Ignore]
+        [TestCase("Bott")]
+        [TestCase("Bare")]
+        public void GetAlliances_SearchNameBeginsWith_HasResults(string searchString)
+        {
+            // Connect if not already connected
+            DoConnect();
+            // Login if not already logged in
+            bool localLogin = DoLogin();
+
+            var result = _hattrickBroker.GetAlliances(
+                new AlliancesRequestInfo()
+                    {
+                        SearchType = AlliancesRequestInfo.SearchTypeEnum.NameBeginsWith,
+                        SearchFor = searchString
+                    });
+            Assert.IsTrue(true);
 
             // Logout if we logged on too
             if (localLogin) DoLogout();
