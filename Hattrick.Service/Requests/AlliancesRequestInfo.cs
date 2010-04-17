@@ -7,6 +7,8 @@ namespace Hattrick.Service.Requests
         public AlliancesRequestInfo()
         {
             // Set defaults here
+            PageIndex = 0;
+            SearchLanguageID = -1; // all languages
             SearchType = SearchTypeEnum.NameBeginsWith;
         }
 

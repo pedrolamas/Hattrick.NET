@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using Hattrick.Service.BaseClasses;
 using Hattrick.Service.Components;
@@ -9,7 +10,7 @@ namespace Hattrick.Service.Responses
     public class AchievementsResponseInfo : BaseResponseInfo
     {
         #region Enumerations - not generated
-        public enum Category
+        public enum Categories
         {
             Ranking = 1,
             Team = 2,
@@ -22,38 +23,21 @@ namespace Hattrick.Service.Responses
         #region Constructors
         public AchievementsResponseInfo()
         {
-            AchievementList = new AchievementListDetails();
+            AchievementList = new List<Achievement>();
         }
         #endregion
 
         #region Properties
 
-        [XmlElement]
-        public AchievementListDetails AchievementList { get; set; }
+        [XmlArray]
+        public List<Achievement> AchievementList { get; set; }
 
         #endregion
 
         #region Auxiliary Classes
-
-        public class AchievementListDetails
+        public class Achievement
         {
-            public AchievementListDetails()
-            {
-                Achievement = new AchievementDetails();
-            }
-
-            #region Properties
-
-
-            [XmlElement]
-            public AchievementDetails Achievement { get; set; }
-
-            #endregion
-        }
-
-        public class AchievementDetails
-        {
-            public AchievementDetails()
+            public Achievement()
             {
             }
 
@@ -75,11 +59,11 @@ namespace Hattrick.Service.Responses
             public GenericNode<int> NumberOfEvents { get; set; }
 
             [XmlIgnore]
-            public Category Category
+            public Categories Category
             {
                 get
                 {
-                    return (AchievementsResponseInfo.Category)Enum.Parse(typeof(AchievementsResponseInfo.Category), CategoryID.ToString());
+                    return (AchievementsResponseInfo.Categories)Enum.Parse(typeof(AchievementsResponseInfo.Categories), CategoryID.ToString());
                 }
             }
 

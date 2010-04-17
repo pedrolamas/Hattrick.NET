@@ -222,7 +222,7 @@ namespace Hattrick.Service
 
         public string GetAlliancesUrl(AlliancesRequestInfo alliancesRequestInfo)
         {
-            string sUrl = "/chppxml.axd?file=alliances";
+            string sUrl = "/chppxml.axd?file=alliances&version=1.2";
 
             sUrl += "&SearchFor=" + alliancesRequestInfo.SearchFor;
             if (alliancesRequestInfo.PageIndex != 0) sUrl += "&PageIndex=" + alliancesRequestInfo.PageIndex.ToString();
