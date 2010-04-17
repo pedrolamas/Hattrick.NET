@@ -98,54 +98,54 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AchievementsRequestInfo.cs" />
-    <Compile Include="AchievementsResponseInfo.cs" />
-    <Compile Include="AllianceDetailsRequestInfo.cs" />
-    <Compile Include="AlliancesRequestInfo.cs" />
-    <Compile Include="AlliancesResponseInfo.cs" />
-    <Compile Include="ArenaDetailsRequestInfo.cs" />
-    <Compile Include="ArenaDetailsResponseInfo.cs">
+    <Compile Include="Requests\AchievementsRequestInfo.cs" />
+    <Compile Include="Responses\AchievementsResponseInfo.cs" />
+    <Compile Include="Requests\AllianceDetailsRequestInfo.cs" />
+    <Compile Include="Requests\AlliancesRequestInfo.cs" />
+    <Compile Include="Responses\AlliancesResponseInfo.cs" />
+    <Compile Include="Requests\ArenaDetailsRequestInfo.cs" />
+    <Compile Include="Responses\ArenaDetailsResponseInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="BaseClasses\ChppRequestBase.cs" />
-    <Compile Include="BaseRequestInfo.cs" />
-    <Compile Include="BookmarksResponseInfo.cs" />
-    <Compile Include="BooleanNode.cs" />
-    <Compile Include="ChallengesResponseInfo.cs" />
-    <Compile Include="ClubDetailsResponseInfo.cs" />
+    <Compile Include="BaseClasses\BaseRequestInfo.cs" />
+    <Compile Include="Responses\BookmarksResponseInfo.cs" />
+    <Compile Include="Components\BooleanNode.cs" />
+    <Compile Include="Responses\ChallengesResponseInfo.cs" />
+    <Compile Include="Responses\ClubDetailsResponseInfo.cs" />
     <Compile Include="Connection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConnectionDetailsResponseInfo.cs" />
-    <Compile Include="AllianceDetailsResponseInfo.cs" />
-    <Compile Include="TrainingEventsResponseInfo.cs" />
-    <Compile Include="TransfersPlayerResponseInfo.cs" />
-    <Compile Include="TransfersTeamResponseInfo.cs" />
-    <Compile Include="TrainingResponseInfo.cs" />
-    <Compile Include="TeamDetailsResponseInfo.cs" />
-    <Compile Include="SearchResponseInfo.cs" />
-    <Compile Include="PlayerEventsResponseInfo.cs" />
-    <Compile Include="PlayerDetailsResponseInfo.cs" />
-    <Compile Include="PlayersResponseInfo.cs" />
-    <Compile Include="MatchOrdersResponseInfo.cs" />
-    <Compile Include="MatchLineupResponseInfo.cs" />
-    <Compile Include="MatchDetailsResponseInfo.cs" />
-    <Compile Include="LeagueFixturesResponseInfo.cs" />
-    <Compile Include="MatchesArchiveResponseInfo.cs" />
-    <Compile Include="MatchesResponseInfo.cs" />
-    <Compile Include="FansResponseInfo.cs" />
-    <Compile Include="EconomyResponseInfo.cs" />
-    <Compile Include="CupMatchesResponseInfo.cs" />
-    <Compile Include="DateTimeNode.cs" />
-    <Compile Include="ErrorDetailsResponseInfo.cs" />
-    <Compile Include="GenericNode.cs" />
-    <Compile Include="BaseResponseInfo.cs" />
-    <Compile Include="HattrickException.cs" />
-    <Compile Include="LeagueDetailsResponseInfo.cs" />
-    <Compile Include="LiveMatchesResponseInfo.cs" />
-    <Compile Include="LoginResponseInfo.cs" />
+    <Compile Include="Responses\ConnectionDetailsResponseInfo.cs" />
+    <Compile Include="Responses\AllianceDetailsResponseInfo.cs" />
+    <Compile Include="Responses\TrainingEventsResponseInfo.cs" />
+    <Compile Include="Responses\TransfersPlayerResponseInfo.cs" />
+    <Compile Include="Responses\TransfersTeamResponseInfo.cs" />
+    <Compile Include="Responses\TrainingResponseInfo.cs" />
+    <Compile Include="Responses\TeamDetailsResponseInfo.cs" />
+    <Compile Include="Responses\SearchResponseInfo.cs" />
+    <Compile Include="Responses\PlayerEventsResponseInfo.cs" />
+    <Compile Include="Responses\PlayerDetailsResponseInfo.cs" />
+    <Compile Include="Responses\PlayersResponseInfo.cs" />
+    <Compile Include="Responses\MatchOrdersResponseInfo.cs" />
+    <Compile Include="Responses\MatchLineupResponseInfo.cs" />
+    <Compile Include="Responses\MatchDetailsResponseInfo.cs" />
+    <Compile Include="Responses\LeagueFixturesResponseInfo.cs" />
+    <Compile Include="Responses\MatchesArchiveResponseInfo.cs" />
+    <Compile Include="Responses\MatchesResponseInfo.cs" />
+    <Compile Include="Responses\FansResponseInfo.cs" />
+    <Compile Include="Responses\EconomyResponseInfo.cs" />
+    <Compile Include="Responses\CupMatchesResponseInfo.cs" />
+    <Compile Include="Components\DateTimeNode.cs" />
+    <Compile Include="Responses\ErrorDetailsResponseInfo.cs" />
+    <Compile Include="Components\GenericNode.cs" />
+    <Compile Include="BaseClasses\BaseResponseInfo.cs" />
+    <Compile Include="Components\HattrickException.cs" />
+    <Compile Include="Responses\LeagueDetailsResponseInfo.cs" />
+    <Compile Include="Responses\LiveMatchesResponseInfo.cs" />
+    <Compile Include="Responses\LoginResponseInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegionDetailsResponseInfo.cs" />
+    <Compile Include="Responses\RegionDetailsResponseInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="hattrick.txt" />
