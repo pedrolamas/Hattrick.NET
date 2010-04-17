@@ -3,6 +3,7 @@
   <hattrick>
     <username></username>
     <securitycode></securitycode>
+    <useragent></useragent>
     <chppid></chppid>
     <chppkey></chppkey>
   </hattrick>

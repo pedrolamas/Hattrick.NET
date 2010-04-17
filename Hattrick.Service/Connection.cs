@@ -50,7 +50,7 @@ namespace Hattrick.Service
             {
                 if (string.IsNullOrEmpty(value)) return;
 
-                var cookies = value; 
+                var cookies = value;
                 foreach (var cookie in cookies.Split(';'))
                 {
                     var keyval = cookie.Split('=');
@@ -59,7 +59,7 @@ namespace Hattrick.Service
                     {
                         _serverCookies[keyval[0]] = keyval[1];
                     }
-                }  
+                }
             }
         }
 
@@ -76,68 +76,31 @@ namespace Hattrick.Service
         }
 
         #region Implemented Requests
-        #region /chppxml.axd?file=arenaDetails
-        private string GetArenaDetailsUrl(ArenaDetailsRequestInfo arenaDetailsRequestInfo)
+
+        #region /chppxml.axd?file=servers
+
+        public void Connect(OnResponse<ConnectionDetailsResponseInfo> onConnect)
         {
-            string sUrl = "/chppxml.axd?file=arenaDetails";
+            DoRequest("http://www.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
+                                                                              {
+                                                                                  _serverUrl = connectionDetails.RecommendedUrl.Value;
+                                                                                  _serverDate = connectionDetails.FetchedDate.Value;
+                                                                                  IsConnected = true;
 
-            if (arenaDetailsRequestInfo.ArenaId != 0) sUrl += "&arenaID=" + arenaDetailsRequestInfo.ArenaId;
-            if (arenaDetailsRequestInfo.StatsType != ArenaDetailsRequestInfo.StatsTypeEnum.MyArena) sUrl += "&StatsType=" + arenaDetailsRequestInfo.StatsType.ToString();
-            if (arenaDetailsRequestInfo.MatchType != ArenaDetailsRequestInfo.MatchTypeEnum.All) sUrl += "&MatchType=" + arenaDetailsRequestInfo.MatchType.ToString();
-            if (arenaDetailsRequestInfo.FirstDate != DateTime.MinValue) sUrl += "&FirstDate=" + arenaDetailsRequestInfo.FirstDate.ToString("yyyy-MM-dd HH:mm:ss");
-            if (arenaDetailsRequestInfo.LastDate != DateTime.MinValue) sUrl += "&LastDate=" + arenaDetailsRequestInfo.LastDate.ToString("yyyy-MM-dd HH:mm:ss");
-            if (arenaDetailsRequestInfo.StatsLeagueID != 0) sUrl += "&StatsLeagueID=" + arenaDetailsRequestInfo.StatsLeagueID;
-
-            return sUrl;
+                                                                                  if (onConnect != null) onConnect(connectionDetails);
+                                                                              });
         }
-        public void GetArenaDetails(OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
+        public ConnectionDetailsResponseInfo Connect()
         {
-            GetArenaDetails(new ArenaDetailsRequestInfo(), onGetArenaDetails);
-        }
-        public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
-        {
-            DoRequest(GetArenaDetailsUrl(arenaDetailsRequestInfo), onGetArenaDetails);
-        }
-        public ArenaDetailsResponseInfo GetArenaDetails()
-        {
-            return GetArenaDetails(new ArenaDetailsRequestInfo());
-        }
-        public ArenaDetailsResponseInfo GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo)
-        {
-            return DoRequest <ArenaDetailsResponseInfo>(GetArenaDetailsUrl(arenaDetailsRequestInfo));
-        }
+            ConnectionDetailsResponseInfo connectionDetails;
+            connectionDetails = DoRequest<ConnectionDetailsResponseInfo>("http://www.hattrick.org/chppxml.axd?file=servers");
 
-        #endregion
+            _serverUrl = connectionDetails.RecommendedUrl.Value;
+            _serverDate = connectionDetails.FetchedDate.Value;
 
-        #region /chppxml.axd?file=club
+            IsConnected = true;
 
-        public void GetClubDetails(OnResponse<ClubDetailsResponseInfo> onGetClubDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=live
-
-        public void AddLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onAddLiveMatch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onDeleteLiveMatch)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearLiveMatches(OnResponse<LiveMatchesResponseInfo> onClearLiveMatches)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GetLiveMatches(OnResponse<LiveMatchesResponseInfo> onGetLiveMatches)
-        {
-            throw new NotImplementedException();
+            return connectionDetails;
         }
 
         #endregion
@@ -154,7 +117,7 @@ namespace Hattrick.Service
                                                             {
                                                                 IsAuthenticated = (loginResponse.IsAuthenticated.Value);
 
-                                                                if(onLogIn!=null) onLogIn(loginResponse);
+                                                                if (onLogIn != null) onLogIn(loginResponse);
                                                             });
         }
         public LoginResponseInfo LogIn(string username, string securityCode)
@@ -182,6 +145,180 @@ namespace Hattrick.Service
             IsAuthenticated = retval.IsAuthenticated.Value;
 
             return retval;
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=achievements
+        public string GetAchievementsUrl(AchievementsRequestInfo achievementsRequestInfo)
+        {
+            string sUrl = "/chppxml.axd?file=achievements";
+
+            if (achievementsRequestInfo.UserId != 0) sUrl += "&userID=" + achievementsRequestInfo.UserId.ToString();
+
+            return sUrl;
+        }
+        public void GetAchievements(OnResponse<AchievementsResponseInfo> onGetAchievements)
+        {
+            GetAchievements(new AchievementsRequestInfo(), onGetAchievements);
+        }
+        public void GetAchievements(AchievementsRequestInfo achievementsRequestInfo, OnResponse<AchievementsResponseInfo> onGetAchievements)
+        {
+            DoRequest(GetAchievementsUrl(achievementsRequestInfo), onGetAchievements);
+        }
+        public AchievementsResponseInfo GetAchievements()
+        {
+            return GetAchievements(new AchievementsRequestInfo());
+        }
+        public AchievementsResponseInfo GetAchievements(AchievementsRequestInfo achievementsRequestInfo)
+        {
+            return DoRequest<AchievementsResponseInfo>(GetAchievementsUrl(achievementsRequestInfo));
+        }
+        #endregion
+
+        #region /chppxml.axd?file=arenaDetails
+        /// <summary>
+        /// Get the parametrised URL
+        /// </summary>
+        /// <param name="arenaDetailsRequestInfo"></param>
+        /// <returns></returns>
+        private string GetArenaDetailsUrl(ArenaDetailsRequestInfo arenaDetailsRequestInfo)
+        {
+            string sUrl = "/chppxml.axd?file=arenaDetails";
+
+            if (arenaDetailsRequestInfo.ArenaId != 0) sUrl += "&arenaID=" + arenaDetailsRequestInfo.ArenaId;
+            if (arenaDetailsRequestInfo.StatsType != ArenaDetailsRequestInfo.StatsTypeEnum.MyArena) sUrl += "&StatsType=" + arenaDetailsRequestInfo.StatsType.ToString();
+            if (arenaDetailsRequestInfo.MatchType != ArenaDetailsRequestInfo.MatchTypeEnum.All) sUrl += "&MatchType=" + arenaDetailsRequestInfo.MatchType.ToString();
+            if (arenaDetailsRequestInfo.FirstDate != DateTime.MinValue) sUrl += "&FirstDate=" + arenaDetailsRequestInfo.FirstDate.ToString("yyyy-MM-dd HH:mm:ss");
+            if (arenaDetailsRequestInfo.LastDate != DateTime.MinValue) sUrl += "&LastDate=" + arenaDetailsRequestInfo.LastDate.ToString("yyyy-MM-dd HH:mm:ss");
+            if (arenaDetailsRequestInfo.StatsLeagueID != 0) sUrl += "&StatsLeagueID=" + arenaDetailsRequestInfo.StatsLeagueID;
+
+            return sUrl;
+        }
+        public void GetArenaDetails(OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
+        {
+            GetArenaDetails(new ArenaDetailsRequestInfo(), onGetArenaDetails);
+        }
+        public void GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo, OnResponse<ArenaDetailsResponseInfo> onGetArenaDetails)
+        {
+            DoRequest(GetArenaDetailsUrl(arenaDetailsRequestInfo), onGetArenaDetails);
+        }
+        public ArenaDetailsResponseInfo GetArenaDetails()
+        {
+            return GetArenaDetails(new ArenaDetailsRequestInfo());
+        }
+        public ArenaDetailsResponseInfo GetArenaDetails(ArenaDetailsRequestInfo arenaDetailsRequestInfo)
+        {
+            return DoRequest<ArenaDetailsResponseInfo>(GetArenaDetailsUrl(arenaDetailsRequestInfo));
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=alliances
+
+        public string GetAlliancesUrl(Service.AlliancesRequestInfo alliancesRequestInfo)
+        {
+            string sUrl = "/chppxml.axd?file=alliances";
+
+            sUrl += "&SearchFor=" + alliancesRequestInfo.SearchFor;
+            if (alliancesRequestInfo.PageIndex != 0) sUrl += "&PageIndex=" + alliancesRequestInfo.PageIndex.ToString();
+            if (alliancesRequestInfo.SearchLanguageID != 0) sUrl += "&SearchLanguageID=" + alliancesRequestInfo.SearchLanguageID.ToString();
+            if (alliancesRequestInfo.SearchType != AlliancesRequestInfo.SearchTypeEnum.NameBeginsWith) sUrl += "&SearchType=" + ((int)alliancesRequestInfo.SearchType).ToString();
+            return sUrl;
+        }
+
+        public void GetAlliances(OnResponse<Service.AlliancesResponseInfo> onGetAlliances)
+        {
+            GetAlliances(new Service.AlliancesRequestInfo(), onGetAlliances);
+        }
+
+        public void GetAlliances(Service.AlliancesRequestInfo alliancesRequestInfo,
+                         OnResponse<Service.AlliancesResponseInfo> onGetAlliances)
+        {
+            DoRequest(GetAlliancesUrl(alliancesRequestInfo), onGetAlliances);
+        }
+
+        public Service.AlliancesResponseInfo GetAlliances()
+        {
+            return GetAlliances(new Service.AlliancesRequestInfo());
+        }
+
+        public Service.AlliancesResponseInfo GetAlliances(Service.AlliancesRequestInfo alliancesRequestInfo)
+        {
+            return DoRequest<Service.AlliancesResponseInfo>(GetAlliancesUrl(alliancesRequestInfo));
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=allianceDetails
+
+        public string GetAllianceDetailsUrl(Service.AllianceDetailsRequestInfo allianceDetailsRequestInfo)
+        {
+            string sUrl = "/chppxml.axd?file=allianceDetails";
+
+            // if (allianceDetailsRequestInfo.UserId != 0) sUrl += "&userID=" + allianceDetailsRequestInfo.UserId.ToString();
+
+            return sUrl;
+        }
+
+        public void GetAllianceDetails(OnResponse<Service.AllianceDetailsResponseInfo> onGetAllianceDetails)
+        {
+            GetAllianceDetails(new Service.AllianceDetailsRequestInfo(), onGetAllianceDetails);
+        }
+
+        public void GetAllianceDetails(Service.AllianceDetailsRequestInfo allianceDetailsRequestInfo,
+                         OnResponse<Service.AllianceDetailsResponseInfo> onGetAllianceDetails)
+        {
+            DoRequest(GetAllianceDetailsUrl(allianceDetailsRequestInfo), onGetAllianceDetails);
+        }
+
+        public Service.AllianceDetailsResponseInfo GetAllianceDetails()
+        {
+            return GetAllianceDetails(new Service.AllianceDetailsRequestInfo());
+        }
+
+        public Service.AllianceDetailsResponseInfo GetAllianceDetails(Service.AllianceDetailsRequestInfo allianceDetailsRequestInfo)
+        {
+            return DoRequest<Service.AllianceDetailsResponseInfo>(GetAllianceDetailsUrl(allianceDetailsRequestInfo));
+        }
+
+        #endregion
+
+
+        #region /chppxml.axd?file=club
+        public string GetClubDetailsUrl(ClubDetailsResponseInfo clubDetailsResponseInfo)
+        {
+            string sUrl = "/chppxml.axd?file=clubDetails";
+
+            return sUrl;
+        }
+        public void GetClubDetails(OnResponse<ClubDetailsResponseInfo> onGetClubDetails)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region /chppxml.axd?file=live
+
+        public void AddLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onAddLiveMatch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteLiveMatch(int matchId, bool isYouth, OnResponse<LiveMatchesResponseInfo> onDeleteLiveMatch)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ClearLiveMatches(OnResponse<LiveMatchesResponseInfo> onClearLiveMatches)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GetLiveMatches(OnResponse<LiveMatchesResponseInfo> onGetLiveMatches)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -216,305 +353,7 @@ namespace Hattrick.Service
         }
         #endregion
 
-        #region /chppxml.axd?file=servers
-
-        public void Connect(OnResponse<ConnectionDetailsResponseInfo> onConnect)
-        {
-            DoRequest("http://www.hattrick.org/chppxml.axd?file=servers", delegate(ConnectionDetailsResponseInfo connectionDetails)
-                                                                              {
-                                                                                  _serverUrl = connectionDetails.RecommendedUrl.Value;
-                                                                                  _serverDate = connectionDetails.FetchedDate.Value;
-                                                                                  IsConnected = true;
-
-                                                                                  if (onConnect != null) onConnect(connectionDetails);
-                                                                              });
-        }
-        public ConnectionDetailsResponseInfo Connect()
-        {
-            ConnectionDetailsResponseInfo connectionDetails;
-            connectionDetails = DoRequest<ConnectionDetailsResponseInfo>("http://www.hattrick.org/chppxml.axd?file=servers");
-
-            _serverUrl = connectionDetails.RecommendedUrl.Value;
-            _serverDate = connectionDetails.FetchedDate.Value;
-
-            IsConnected = true;
-
-            return connectionDetails;
-        }
-
         #endregion
-
-        #endregion
-
-        #region Not Yet Implemented Requests
-
-        #region /chppxml.axd?file=achievements (TODO)
-
-        public void GetAchievements(OnResponse<AchievementsResponseInfo> onGetAchievements)
-        {
-            GetAchievements(0, onGetAchievements);
-        }
-
-        public void GetAchievements(int userId, OnResponse<AchievementsResponseInfo> onGetAchievements)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=alliances (TODO)
-
-        public void GetAlliances(OnResponse<AlliancesResponseInfo> onGetAlliances)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=allianceDetails (TODO)
-
-        public void GetAllianceDetails(OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=bookmarks (TODO)
-
-        public void GetBookmarks(int bookmarkType, OnResponse<BookmarksResponseInfo> onGetBookmarks)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=challanges (TODO)
-
-        public void GetChallanges(OnResponse<ChallangesResponseInfo> onGetChallanges)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=cupMatches (TODO)
-
-        public void GetCupMatches(OnResponse<CupMatchesResponseInfo> onGetCupMatches)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=economy (TODO)
-
-        public void GetEconomy(OnResponse<EconomyResponseInfo> onGetEconomy)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=fans (TODO)
-
-        public void GetFans(OnResponse<FansResponseInfo> onGetFans)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=leagueDetails (TODO)
-
-        public void GetLeagueDetails(OnResponse<LeagueDetailsResponseInfo> onGetLeagueDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=leagueFixtures (TODO)
-
-        public void GetLeagueFixtures(OnResponse<LeagueFixturesResponseInfo> onGetLeagueFixtures)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=matches (TODO)
-
-        public void GetMatches(OnResponse<MatchesResponseInfo> onGetMatches)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=matchesArchive (TODO)
-
-        public void GetMatchesArchive(OnResponse<MatchesArchiveResponseInfo> onGetMatchesArchive)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=matchDetails (TODO)
-
-        public void GetMatchDetails(OnResponse<MatchDetailsResponseInfo> onGetMatchDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=matchLineup (TODO)
-
-        public void GetMatchLineup(OnResponse<MatchLineupResponseInfo> onGetMatchLineup)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=matchOrders (TODO)
-
-        public void GetMatchOrders(OnResponse<MatchOrdersResponseInfo> onGetMatchOrders)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=players (TODO)
-
-        public void GetPlayers(OnResponse<PlayersResponseInfo> onGetPlayers)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=playerDetails (TODO)
-
-        public void GetPlayerDetails(OnResponse<PlayerDetailsResponseInfo> onGetPlayerDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=playerEvents (TODO)
-
-        public void GetPlayerEvents(OnResponse<PlayerEventsResponseInfo> onGetPlayerEvents)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=search (TODO)
-
-        public void Search(OnResponse<SearchResponseInfo> onSearch)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=teamDetails (TODO)
-
-        public void GetTeamDetails(OnResponse<TeamDetailsResponseInfo> onGetTeamDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=training (TODO)
-
-        public void GetTraining(OnResponse<TrainingResponseInfo> onGetTraining)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=trainingEvents (TODO)
-
-        public void GetTrainingEvents(OnResponse<TrainingEventsResponseInfo> onGetTrainingEvents)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=transfersTeam (TODO)
-
-        public void GetTransfersTeam(OnResponse<TransfersTeamResponseInfo> onGetTransfersTeam)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region /chppxml.axd?file=transfersPlayer (TODO)
-
-        public void GetTransfersPlayer(OnResponse<TransfersPlayerResponseInfo> onGetTransfersPlayer)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #endregion
-
-        //public void GetTeamDetails(int teamID, OnResponse<XDocument> onGetTeamDetails)
-        //{
-        //    DoRequest("/common/teamDetails.asp?outputType=XML&actionType=view" + (teamID == 0 ? string.Empty : "&teamID=" + teamID), onGetTeamDetails);
-        //}
-
-        //public void GetMatches(int teamID, OnResponse<XDocument> onGetMatches)
-        //{
-        //    DoRequest("/common/chpp/chppxml.axd?file=matches" + (teamID == 0 ? "" : "&teamID=" + teamID), onGetMatches);
-        //}
-
-        //public void GetMatchDetails(int matchID, OnResponse<XDocument> onGetMatchDetails)
-        //{
-        //    DoRequest("/common/chpp/chppxml.axd?file=matchdetails&matchID=" + matchID, onGetMatchDetails);
-        //}
-
-        //public void GetPlayers(int teamID, OnResponse<XDocument> onGetPlayers)
-        //{
-        //    DoRequest("/common/players.asp?outputType=XML&actionType=view&orderBy=PlayerNumber&outputVersion=1.3" + (teamID == 0 ? "" : "&teamID=" + teamID), onGetPlayers);
-        //}
-
-        //public void GetPlayerDetails(int playerID, OnResponse<XDocument> onGetPlayerDetails)
-        //{
-        //    DoRequest("/common/playerDetails.asp?outputType=XML&actionType=view&playerID=" + playerID, onGetPlayerDetails);
-        //}
-
-        //public void AddLiveMatch(int matchID, OnResponse<XDocument> onAddLiveMatch)
-        //{
-        //    DoRequest("/common/chpp/chppxml.axd?file=live&actionType=addMatch&matchID=" + matchID, onAddLiveMatch);
-        //}
-
-        //public void GetLeagueDetails(int leagueUnitID, OnResponse<XDocument> onGetLeagueDetails)
-        //{
-        //    DoRequest("/common/leagueDetails.asp?outputType=XML&actionType=view" + (leagueUnitID == 0 ? "" : "&leagueLevelUnitID=" + leagueUnitID), onGetLeagueDetails);
-        //}
-
-        //public void GetEconomy(OnResponse<XDocument> onGetEconomy)
-        //{
-        //    DoRequest("/common/economy.asp?outputType=XML&actionType=view", onGetEconomy);
-        //}
-
-        //public void GetWorldDetails(OnResponse<XDocument> onGetWorldDetails)
-        //{
-        //    DoRequest("/common/chppxml.axd?file=worlddetails", onGetWorldDetails);
-        //}
 
         #region Request Methods
 

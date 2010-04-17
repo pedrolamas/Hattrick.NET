@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Serialization;
 
 namespace Hattrick.Service
 {
     public class DateTimeNode : GenericNode<DateTime>, IXmlSerializable
     {
-        private const string DATETIME_FORMAT = @"yyyy-MM-dd hh:MM:ss";
+        private const string DATETIME_FORMAT = @"yyyy-MM-dd HH:mm:ss";
 
         #region IXmlSerializable Members
 
@@ -21,8 +24,16 @@ namespace Hattrick.Service
         {
             reader.MoveToContent();
 
-            Value = DateTime.Parse(reader.ReadString());
+            var inputstring = reader.ReadString();
 
+            try
+            {
+                Value = DateTime.ParseExact(inputstring, DATETIME_FORMAT, Thread.CurrentThread.CurrentCulture.DateTimeFormat, DateTimeStyles.AssumeLocal);
+            }
+            catch (Exception ex)
+            {
+                Debug.Assert(false, "Invalid DateTime: " + inputstring);
+            }
             reader.Read();
         }
 
