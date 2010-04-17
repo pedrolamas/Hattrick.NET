@@ -6,6 +6,10 @@ using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Hattrick.Service.BaseClasses;
+using Hattrick.Service.Components;
+using Hattrick.Service.Requests;
+using Hattrick.Service.Responses;
 
 namespace Hattrick.Service
 {
@@ -216,7 +220,7 @@ namespace Hattrick.Service
 
         #region /chppxml.axd?file=alliances
 
-        public string GetAlliancesUrl(Service.AlliancesRequestInfo alliancesRequestInfo)
+        public string GetAlliancesUrl(AlliancesRequestInfo alliancesRequestInfo)
         {
             string sUrl = "/chppxml.axd?file=alliances";
 
@@ -227,32 +231,32 @@ namespace Hattrick.Service
             return sUrl;
         }
 
-        public void GetAlliances(OnResponse<Service.AlliancesResponseInfo> onGetAlliances)
+        public void GetAlliances(OnResponse<AlliancesResponseInfo> onGetAlliances)
         {
-            GetAlliances(new Service.AlliancesRequestInfo(), onGetAlliances);
+            GetAlliances(new AlliancesRequestInfo(), onGetAlliances);
         }
 
-        public void GetAlliances(Service.AlliancesRequestInfo alliancesRequestInfo,
-                         OnResponse<Service.AlliancesResponseInfo> onGetAlliances)
+        public void GetAlliances(AlliancesRequestInfo alliancesRequestInfo,
+                         OnResponse<AlliancesResponseInfo> onGetAlliances)
         {
             DoRequest(GetAlliancesUrl(alliancesRequestInfo), onGetAlliances);
         }
 
-        public Service.AlliancesResponseInfo GetAlliances()
+        public AlliancesResponseInfo GetAlliances()
         {
-            return GetAlliances(new Service.AlliancesRequestInfo());
+            return GetAlliances(new AlliancesRequestInfo());
         }
 
-        public Service.AlliancesResponseInfo GetAlliances(Service.AlliancesRequestInfo alliancesRequestInfo)
+        public AlliancesResponseInfo GetAlliances(AlliancesRequestInfo alliancesRequestInfo)
         {
-            return DoRequest<Service.AlliancesResponseInfo>(GetAlliancesUrl(alliancesRequestInfo));
+            return DoRequest<AlliancesResponseInfo>(GetAlliancesUrl(alliancesRequestInfo));
         }
 
         #endregion
 
         #region /chppxml.axd?file=allianceDetails
 
-        public string GetAllianceDetailsUrl(Service.AllianceDetailsRequestInfo allianceDetailsRequestInfo)
+        public string GetAllianceDetailsUrl(AllianceDetailsRequestInfo allianceDetailsRequestInfo)
         {
             string sUrl = "/chppxml.axd?file=allianceDetails";
 
@@ -261,25 +265,25 @@ namespace Hattrick.Service
             return sUrl;
         }
 
-        public void GetAllianceDetails(OnResponse<Service.AllianceDetailsResponseInfo> onGetAllianceDetails)
+        public void GetAllianceDetails(OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
         {
-            GetAllianceDetails(new Service.AllianceDetailsRequestInfo(), onGetAllianceDetails);
+            GetAllianceDetails(new AllianceDetailsRequestInfo(), onGetAllianceDetails);
         }
 
-        public void GetAllianceDetails(Service.AllianceDetailsRequestInfo allianceDetailsRequestInfo,
-                         OnResponse<Service.AllianceDetailsResponseInfo> onGetAllianceDetails)
+        public void GetAllianceDetails(AllianceDetailsRequestInfo allianceDetailsRequestInfo,
+                         OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
         {
             DoRequest(GetAllianceDetailsUrl(allianceDetailsRequestInfo), onGetAllianceDetails);
         }
 
-        public Service.AllianceDetailsResponseInfo GetAllianceDetails()
+        public AllianceDetailsResponseInfo GetAllianceDetails()
         {
-            return GetAllianceDetails(new Service.AllianceDetailsRequestInfo());
+            return GetAllianceDetails(new AllianceDetailsRequestInfo());
         }
 
-        public Service.AllianceDetailsResponseInfo GetAllianceDetails(Service.AllianceDetailsRequestInfo allianceDetailsRequestInfo)
+        public AllianceDetailsResponseInfo GetAllianceDetails(AllianceDetailsRequestInfo allianceDetailsRequestInfo)
         {
-            return DoRequest<Service.AllianceDetailsResponseInfo>(GetAllianceDetailsUrl(allianceDetailsRequestInfo));
+            return DoRequest<AllianceDetailsResponseInfo>(GetAllianceDetailsUrl(allianceDetailsRequestInfo));
         }
 
         #endregion
