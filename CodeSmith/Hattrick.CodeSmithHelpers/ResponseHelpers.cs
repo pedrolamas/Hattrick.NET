@@ -60,6 +60,11 @@ namespace Hattrick.CodeSmithHelpers
             return SimpleElms;
         }
 
+        public static bool ElementInResponseBase(string elmName)
+        {
+            return new List<String>() {"FileName", "Version", "FetchedDate", "UserID"}.Contains(elmName);
+        }
+
         public static string GetPropertyTypeByNameValue(string name, string value)
         {
             if (name.EndsWith("ID", false, null))
