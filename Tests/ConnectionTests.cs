@@ -197,6 +197,21 @@ namespace Tests
             if (localLogin) DoLogout();
         }
 
+        [Test]
+        public void GetEconomy_LoggedIn_LoadsEconomyDetails()
+        {
+            // Connect if not already connected
+            DoConnect();
+            // Login if not already logged in
+            bool localLogin = DoLogin();
+
+            var result = _hattrickBroker.GetEconomy();
+
+            Assert.Greater(result.Team.IncomeSum.Value, 0);
+
+            // Logout if we logged on too
+            if (localLogin) DoLogout();
+        }
 
         [Test]
         [Ignore("Template test.")]

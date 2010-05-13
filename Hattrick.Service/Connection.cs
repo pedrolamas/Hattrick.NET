@@ -321,6 +321,38 @@ namespace Hattrick.Service
 
         #endregion
 
+        #region /chppxml.axd?file=economy
+
+        public string GetEconomyUrl(EconomyRequestInfo economyRequestInfo)
+        {
+            string sUrl = "/chppxml.axd?file=economy";
+
+            // if (economyRequestInfo.UserId != 0) sUrl += "&userID=" + economyRequestInfo.UserId.ToString();
+
+            return sUrl;
+        }
+
+        public void GetEconomy(OnResponse<EconomyResponseInfo> onGetEconomy)
+        {
+            GetEconomy(new EconomyRequestInfo(), onGetEconomy);
+        }
+
+        public void GetEconomy(EconomyRequestInfo economyRequestInfo, OnResponse<EconomyResponseInfo> onGetEconomy)
+        {
+            DoRequest(GetEconomyUrl(economyRequestInfo), onGetEconomy);
+        }
+
+        public EconomyResponseInfo GetEconomy()
+        {
+            return GetEconomy(new EconomyRequestInfo());
+        }
+
+        public EconomyResponseInfo GetEconomy(EconomyRequestInfo economyRequestInfo)
+        {
+            return DoRequest<EconomyResponseInfo>(GetEconomyUrl(economyRequestInfo));
+        }
+
+        #endregion
 
         #region /chppxml.axd?file=live
 
