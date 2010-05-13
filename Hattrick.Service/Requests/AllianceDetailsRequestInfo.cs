@@ -10,7 +10,6 @@ namespace Hattrick.Service.Requests
             Subset = CharacterEnum.All;
         }
 
-
         #region Enumerations
         public enum ActionTypeEnum
         {

@@ -256,52 +256,71 @@ namespace Hattrick.Service
 
         #region /chppxml.axd?file=allianceDetails
 
-        public string GetAllianceDetailsUrl(AllianceDetailsRequestInfo allianceDetailsRequestInfo)
-        {
-            string sUrl = "/chppxml.axd?file=allianceDetails";
+        //public string GetAllianceDetailsUrl(AllianceDetailsRequestInfo allianceDetailsRequestInfo)
+        //{
+        //    string sUrl = "/chppxml.axd?file=allianceDetails&version=1.4";
 
-            // if (allianceDetailsRequestInfo.UserId != 0) sUrl += "&userID=" + allianceDetailsRequestInfo.UserId.ToString();
+        //    // if (allianceDetailsRequestInfo.UserId != 0) sUrl += "&userID=" + allianceDetailsRequestInfo.UserId.ToString();
 
-            return sUrl;
-        }
+        //    return sUrl;
+        //}
 
-        public void GetAllianceDetails(OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
-        {
-            GetAllianceDetails(new AllianceDetailsRequestInfo(), onGetAllianceDetails);
-        }
+        //public void GetAllianceDetails(OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
+        //{
+        //    GetAllianceDetails(new AllianceDetailsRequestInfo(), onGetAllianceDetails);
+        //}
 
-        public void GetAllianceDetails(AllianceDetailsRequestInfo allianceDetailsRequestInfo,
-                         OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
-        {
-            DoRequest(GetAllianceDetailsUrl(allianceDetailsRequestInfo), onGetAllianceDetails);
-        }
+        //public void GetAllianceDetails(AllianceDetailsRequestInfo allianceDetailsRequestInfo,
+        //                 OnResponse<AllianceDetailsResponseInfo> onGetAllianceDetails)
+        //{
+        //    DoRequest(GetAllianceDetailsUrl(allianceDetailsRequestInfo), onGetAllianceDetails);
+        //}
 
-        public AllianceDetailsResponseInfo GetAllianceDetails()
-        {
-            return GetAllianceDetails(new AllianceDetailsRequestInfo());
-        }
+        //public AllianceDetailsResponseInfo GetAllianceDetails()
+        //{
+        //    return GetAllianceDetails(new AllianceDetailsRequestInfo());
+        //}
 
-        public AllianceDetailsResponseInfo GetAllianceDetails(AllianceDetailsRequestInfo allianceDetailsRequestInfo)
-        {
-            return DoRequest<AllianceDetailsResponseInfo>(GetAllianceDetailsUrl(allianceDetailsRequestInfo));
-        }
+        //public AllianceDetailsResponseInfo GetAllianceDetails(AllianceDetailsRequestInfo allianceDetailsRequestInfo)
+        //{
+        //    return DoRequest<AllianceDetailsResponseInfo>(GetAllianceDetailsUrl(allianceDetailsRequestInfo));
+        //}
 
         #endregion
-
 
         #region /chppxml.axd?file=club
-        public string GetClubDetailsUrl(ClubDetailsResponseInfo clubDetailsResponseInfo)
+
+        public string GetClubUrl(ClubRequestInfo clubRequestInfo)
         {
-            string sUrl = "/chppxml.axd?file=clubDetails";
+            string sUrl = "/chppxml.axd?file=club";
+
+            // if (clubRequestInfo.UserId != 0) sUrl += "&userID=" + clubRequestInfo.UserId.ToString();
 
             return sUrl;
         }
-        public void GetClubDetails(OnResponse<ClubDetailsResponseInfo> onGetClubDetails)
+
+        public void GetClub(OnResponse<ClubResponseInfo> onGetClub)
         {
-            throw new NotImplementedException();
+            GetClub(new ClubRequestInfo(), onGetClub);
+        }
+
+        public void GetClub(ClubRequestInfo clubRequestInfo, OnResponse<ClubResponseInfo> onGetClub)
+        {
+            DoRequest(GetClubUrl(clubRequestInfo), onGetClub);
+        }
+
+        public ClubResponseInfo GetClub()
+        {
+            return GetClub(new ClubRequestInfo());
+        }
+
+        public ClubResponseInfo GetClub(ClubRequestInfo clubRequestInfo)
+        {
+            return DoRequest<ClubResponseInfo>(GetClubUrl(clubRequestInfo));
         }
 
         #endregion
+
 
         #region /chppxml.axd?file=live
 
