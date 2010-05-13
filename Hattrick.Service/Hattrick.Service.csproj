@@ -100,6 +100,7 @@
   <ItemGroup>
     <Compile Include="Requests\AchievementsRequestInfo.cs" />
     <Compile Include="Requests\ClubRequestInfo.cs" />
+    <Compile Include="Requests\EconomyRequestInfo.cs" />
     <Compile Include="Responses\AchievementsResponseInfo.cs" />
     <Compile Include="Requests\AllianceDetailsRequestInfo.cs" />
     <Compile Include="Requests\AlliancesRequestInfo.cs" />
