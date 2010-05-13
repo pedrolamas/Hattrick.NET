@@ -99,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Requests\AchievementsRequestInfo.cs" />
+    <Compile Include="Requests\ClubRequestInfo.cs" />
     <Compile Include="Responses\AchievementsResponseInfo.cs" />
     <Compile Include="Requests\AllianceDetailsRequestInfo.cs" />
     <Compile Include="Requests\AlliancesRequestInfo.cs" />
@@ -112,10 +113,10 @@
     <Compile Include="Responses\BookmarksResponseInfo.cs" />
     <Compile Include="Components\BooleanNode.cs" />
     <Compile Include="Responses\ChallengesResponseInfo.cs" />
-    <Compile Include="Responses\ClubDetailsResponseInfo.cs" />
     <Compile Include="Connection.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Responses\ClubResponseInfo.cs" />
     <Compile Include="Responses\ConnectionDetailsResponseInfo.cs" />
     <Compile Include="Responses\AllianceDetailsResponseInfo.cs" />
     <Compile Include="Responses\TrainingEventsResponseInfo.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 using Hattrick.Service.BaseClasses;
 using Hattrick.Service.Components;
 
@@ -12,41 +13,21 @@ namespace Hattrick.Service.Responses
         #region Constructors
         public AlliancesResponseInfo()
         {
-            Alliances = new AlliancesDetails();
+            Alliances = new List<Alliance>();
         }
         #endregion
 
         #region Properties
 
-        [XmlElement]
-        public AlliancesDetails Alliances { get; set; }
+        [XmlArray]
+        public List<Alliance> Alliances { get; set; }
 
         #endregion
 
         #region Auxiliary Classes
 
-        public class AlliancesDetails
+        public class Alliance
         {
-            public AlliancesDetails()
-            {
-                Alliance = new AllianceDetails();
-            }
-
-            #region Properties
-
-
-            [XmlElement]
-            public AllianceDetails Alliance { get; set; }
-
-            #endregion
-        }
-
-        public class AllianceDetails
-        {
-            public AllianceDetails()
-            {
-            }
-
             #region Properties
 
             [XmlElement]
@@ -55,7 +36,6 @@ namespace Hattrick.Service.Responses
             public GenericNode<string> AllianceName { get; set; }
             [XmlElement]
             public GenericNode<string> AllianceDescription { get; set; }
-
 
             #endregion
         }

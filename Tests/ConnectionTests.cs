@@ -57,7 +57,7 @@ namespace Tests
         [SetUp]
         public void Init()
         {
-                        try
+            try
             {
                 var xmlDoc = new XmlDocument();
                 xmlDoc.Load(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.xml"));
@@ -160,7 +160,6 @@ namespace Tests
         }
 
         [Test]
-        [Ignore]
         [TestCase("Bott")]
         [TestCase("Bare")]
         public void GetAlliances_SearchNameBeginsWith_HasResults(string searchString)
@@ -176,11 +175,28 @@ namespace Tests
                         SearchType = AlliancesRequestInfo.SearchTypeEnum.NameBeginsWith,
                         SearchFor = searchString
                     });
-            Assert.IsTrue(true);
+            Assert.Greater(result.Alliances.Count, 0);
 
             // Logout if we logged on too
             if (localLogin) DoLogout();
         }
+
+        [Test]
+        public void GetClub_LoggedIn_LoadsStaffAndYouth()
+        {
+            // Connect if not already connected
+            DoConnect();
+            // Login if not already logged in
+            bool localLogin = DoLogin();
+
+            var result = _hattrickBroker.GetClub();
+    
+            Assert.IsNotEmpty(result.Team.TeamName.ToString());
+
+            // Logout if we logged on too
+            if (localLogin) DoLogout();
+        }
+
 
         [Test]
         [Ignore("Template test.")]
